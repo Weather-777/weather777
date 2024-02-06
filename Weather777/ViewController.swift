@@ -6,17 +6,17 @@
 //
 
 import UIKit
-import SnapKit
-import Then
 
 class ViewController: UIViewController {
     
     // MARK: - UI Properties
     // Then은 기호에 따라 사용, 상단 탭 File - Add Package Dependencies - 우측 Url창 - 설치 주소 : https://github.com/devxoul/Then
-    let testLabel = UILabel().then {
-        $0.text = "7팀 화이팅입니다.😃 "
-        $0.translatesAutoresizingMaskIntoConstraints = false
-    }
+    let testLabel: UILabel = {
+        let label = UILabel()
+        label.text = "7팀 화이팅입니다.😃 "
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
     
     // MARK: - Life Cycle
     override func viewDidLoad() {
@@ -42,9 +42,10 @@ extension ViewController {
     
     func setLayout() {
         // SnapKit은 기호에 따라 사용, 상단 탭 File - Add Package Dependencies - 우측 Url창 - 설치 주소 : https://github.com/SnapKit/SnapKit.git
-        testLabel.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.centerY.equalToSuperview()
-        }
+        NSLayoutConstraint.activate([
+            testLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            testLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
     }
 }
+
