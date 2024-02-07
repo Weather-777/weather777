@@ -23,7 +23,8 @@ class WeatherManager {
     
     // MARK: - public Methods
     //LocationManager에서 위치정보를 받고, 위경도 API에 적용한 후, 날씨 데이터 값 복사 : 독립적인 인스턴스 생성
-    public func getLocationWeather(completion: @escaping(Result<WeatherData, NetworkError>) -> Void) {
+    public func getLocationWeather(latitude: Double, longitude: Double, completion: @escaping(Result<WeatherData, NetworkError>) -> Void) {
+        LocationManager.shared.setLocation(latitude: latitude, longitude: longitude)
         guard let currentLocation = LocationManager.shared.currentLocation else {
             return completion(.failure(.badLocation))
         }

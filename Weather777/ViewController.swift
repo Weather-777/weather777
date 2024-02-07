@@ -7,6 +7,7 @@
 
 import UIKit
 import SwiftUI
+import CoreLocation
 
 
 class ViewController: UIViewController {
@@ -39,7 +40,7 @@ class ViewController: UIViewController {
        
         //LocationManager가 위치정보 업데이트 -> WeatherManager가 날씨정보 업데이트 -> 초기화한 weather, main DTO에서 날씨정보를 가져와 비동기로 UI를 업데이트
         LocationManager.shared.onLocationUpdate = { [weak self] location in
-            WeatherManager.shared.getLocationWeather { result in
+            WeatherManager.shared.getLocationWeather(latitude: location.latitude, longitude: location.longitude) { result in
                 switch result {
                 case .success(let weatherResponse):
                     DispatchQueue.main.async {
