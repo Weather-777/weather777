@@ -7,10 +7,10 @@
 
 import UIKit
 import SwiftUI
+import MapKit
 
 class WeatherListViewController: UIViewController
 {
-    
     
     var location = 0
     var weather = "맑음"
