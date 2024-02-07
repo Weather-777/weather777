@@ -22,32 +22,7 @@ class WeatherManager {
     private init() {}
     
     // MARK: - public Methods
-    // 서울지역 : URL(string: "https://api.openweathermap.org/data/2.5/weather?q=seoul&appid=\(apiKey)")
-    public func getWeather(completion: @escaping(Result<WeatherData, NetworkError>) -> Void) {
-        let url = URL(string: "https://api.openweathermap.org/data/2.5/weather?q=seoul&appid=\(apiKey)")
-        guard let url = url else {
-            return completion(.failure(.badUrl))
-        }
-        
-        URLSession.shared.dataTask(with: url) { data, response, error in
-            guard let data = data, error == nil else {
-                return completion(.failure(.noData))
-            }
-            
-            // Data 타입으로 받은 리턴을 디코드
-            let weatherData = try? JSONDecoder().decode(WeatherData.self, from: data)
-            
-            // 성공 시 성공한 데이터 저장
-            if let weatherData = weatherData {
-                completion(.success(weatherData))
-            } else {
-                completion(.failure(.decodingError))
-            }
-        }.resume()  // dataTask 시작
-        print("Success")
-    }
-    
-    // 서울지역이 아닌 곳을 하려면 어떻게 해야할까?
+    //LocationManager에서 위치정보를 받고, 위경도 API에 적용한 후, 날씨 데이터 값 복사 : 독립적인 인스턴스 생성
     public func getLocationWeather(completion: @escaping(Result<WeatherData, NetworkError>) -> Void) {
         guard let currentLocation = LocationManager.shared.currentLocation else {
             return completion(.failure(.badLocation))
@@ -106,3 +81,4 @@ extension WeatherManager {
         }
     }
 }
+

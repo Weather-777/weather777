@@ -112,6 +112,7 @@ extension ViewController {
         ])
     }
     
+    //WeatherData의 데이터를 활용하여 UI에 적용하기
     private func updateWeather() {
         guard let icon = self.weather?.icon else {
             return
@@ -154,7 +155,7 @@ extension ViewController {
     }
 }
 
-
+// 화씨를 섭씨로 전환하는 매소드
 extension ViewController {
     func convertFahrenheitToCelsius(_ fahrenheit: Double) -> String? {
         let celsiusUnit = UnitTemperature.celsius
@@ -167,29 +168,3 @@ extension ViewController {
         return ""
     }
 }
-
-// MARK: - Preview
-struct PreView: PreviewProvider {
-    static var previews: some View {
-        ViewController().toPreview()
-    }
-}
-
-#if DEBUG
-extension UIViewController {
-    private struct Preview: UIViewControllerRepresentable {
-        let viewController: UIViewController
-        
-        func makeUIViewController(context: Context) -> UIViewController {
-            return viewController
-        }
-        
-        func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
-        }
-    }
-    
-    func toPreview() -> some View {
-        Preview(viewController: self)
-    }
-}
-#endif
