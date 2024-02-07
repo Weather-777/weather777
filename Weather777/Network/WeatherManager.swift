@@ -16,7 +16,7 @@ enum NetworkError: Error {
 }
 
 class WeatherManager {
-    // 싱글톤 정적상수
+    // 싱글톤 정적상수 활용
     static let shared = WeatherManager()
     
     private init() {}

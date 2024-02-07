@@ -9,7 +9,7 @@ import Foundation
 import CoreLocation
 
 class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
-    // 싱글톤 정적상수
+    // 싱글톤 정적상수 활용
     static let shared = LocationManager()
     
     // Create a location manager. 초기화
