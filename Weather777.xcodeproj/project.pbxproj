@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		6C43002D2B736F36009D8A6B /* WeatherListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C43002B2B736F36009D8A6B /* WeatherListTableViewCell.swift */; };
 		6C43002E2B736F36009D8A6B /* WeatherListTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6C43002C2B736F36009D8A6B /* WeatherListTableViewCell.xib */; };
+		4E46B42D2B7246E8005FF8C4 /* CleanSky.gif in Resources */ = {isa = PBXBuildFile; fileRef = 4E46B42C2B7246E8005FF8C4 /* CleanSky.gif */; };
 		C87623602B7101A100748961 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C876235F2B7101A100748961 /* AppDelegate.swift */; };
 		C87623622B7101A100748961 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C87623612B7101A100748961 /* SceneDelegate.swift */; };
 		C87623642B7101A100748961 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C87623632B7101A100748961 /* ViewController.swift */; };
@@ -25,6 +26,7 @@
 /* Begin PBXFileReference section */
 		6C43002B2B736F36009D8A6B /* WeatherListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherListTableViewCell.swift; sourceTree = "<group>"; };
 		6C43002C2B736F36009D8A6B /* WeatherListTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = WeatherListTableViewCell.xib; sourceTree = "<group>"; };
+		4E46B42C2B7246E8005FF8C4 /* CleanSky.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = CleanSky.gif; sourceTree = "<group>"; };
 		C876235C2B7101A100748961 /* Weather777.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Weather777.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C876235F2B7101A100748961 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C87623612B7101A100748961 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -39,16 +41,6 @@
 		C87623892B71243400748961 /* WeatherModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherModel.swift; sourceTree = "<group>"; };
 		C876238B2B71244600748961 /* WeatherManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
-
-/* Begin PBXFrameworksBuildPhase section */
-		C87623592B7101A100748961 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		C87623532B7101A100748961 = {
@@ -96,6 +88,7 @@
 			isa = PBXGroup;
 			children = (
 				C87623812B71239600748961 /* MainViewController.swift */,
+				4E46B42C2B7246E8005FF8C4 /* CleanSky.gif */,
 			);
 			path = Main;
 			sourceTree = "<group>";
@@ -136,7 +129,6 @@
 			buildConfigurationList = C87623702B7101A200748961 /* Build configuration list for PBXNativeTarget "Weather777" */;
 			buildPhases = (
 				C87623582B7101A100748961 /* Sources */,
-				C87623592B7101A100748961 /* Frameworks */,
 				C876235A2B7101A100748961 /* Resources */,
 			);
 			buildRules = (
@@ -144,8 +136,6 @@
 			dependencies = (
 			);
 			name = Weather777;
-			packageProductDependencies = (
-			);
 			productName = Weather777;
 			productReference = C876235C2B7101A100748961 /* Weather777.app */;
 			productType = "com.apple.product-type.application";
@@ -174,8 +164,6 @@
 				Base,
 			);
 			mainGroup = C87623532B7101A100748961;
-			packageReferences = (
-			);
 			productRefGroup = C876235D2B7101A100748961 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -190,6 +178,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4E46B42D2B7246E8005FF8C4 /* CleanSky.gif in Resources */,
 				C876236C2B7101A200748961 /* LaunchScreen.storyboard in Resources */,
 				6C43002E2B736F36009D8A6B /* WeatherListTableViewCell.xib in Resources */,
 				C87623692B7101A200748961 /* Assets.xcassets in Resources */,
@@ -356,6 +345,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Weather777/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -383,6 +373,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Weather777/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
