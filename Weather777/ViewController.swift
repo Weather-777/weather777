@@ -6,6 +6,7 @@
 //
 
 import UIKit
+
 import SwiftUI
 import CoreLocation
 
@@ -17,6 +18,7 @@ class ViewController: UIViewController {
 
     
     // MARK: - UI Properties
+
     let testLabel: UILabel = {
         let label = UILabel()
         label.text = "7팀 화이팅입니다.😃"
@@ -169,3 +171,4 @@ extension ViewController {
         return ""
     }
 }
+
