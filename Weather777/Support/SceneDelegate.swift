@@ -19,8 +19,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: windowScene)
         let rootVC = ViewController() // 추후 해당 뷰컨으로 조정
-        let navc = UINavigationController(rootViewController: rootVC)
-        window?.rootViewController = navc
+        window?.rootViewController = rootVC
         window?.makeKeyAndVisible()
     }
 
