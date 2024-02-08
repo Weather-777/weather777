@@ -19,7 +19,9 @@ class WeatherListViewController: UIViewController
     var highTemperature = 10
     var lowTemperature = 3
     
-    var settingValue = 1
+    var temperatureUnits: String = "C"
+    var checkdCelsiusAction: UIMenuElement.State = .on
+    var checkedFahrenheitAction: UIMenuElement.State = .off
     
     
     let data = ["1", "2","3"]
@@ -45,8 +47,20 @@ class WeatherListViewController: UIViewController
         button.setTitleColor(.clear, for: .normal)
         
         let edit = UIAction(title: "목록 편집", image: UIImage(systemName: "pencil"), state: .off, handler: { _ in print("목록 편집") })
-        let C = UIAction(title: "섭씨", image: UIImage(named: "°C"), handler: { _ in self.settingValue = 1 })
-        let F = UIAction(title: "화씨", image: UIImage(named: "°F"), handler: { _ in self.settingValue = 0 })
+        let C = UIAction(title: "섭씨", image: UIImage(named: "°C"), state: checkdCelsiusAction, handler: { _ in
+            self.temperatureUnits = "C"
+            self.checkdCelsiusAction = .on
+            self.checkedFahrenheitAction = .off
+            self.updateTemperature()
+            self.updateMenu()
+        })
+        let F = UIAction(title: "화씨", image: UIImage(named: "°F"), state: checkedFahrenheitAction, handler: { _ in
+            self.temperatureUnits = "F"
+            self.checkdCelsiusAction = .off
+            self.checkedFahrenheitAction = .on
+            self.updateTemperature()
+            self.updateMenu()
+        })
         let line = UIMenu(title: "", options: .displayInline, children: [C, F])
         
         let menu = UIMenu(title: "", children: [edit, line])
@@ -62,7 +76,7 @@ class WeatherListViewController: UIViewController
         return button
     }()
 
-    let locationSearchBar: UISearchBar =
+    lazy var locationSearchBar: UISearchBar =
     {
         let searchBar = UISearchBar()
         
@@ -75,7 +89,7 @@ class WeatherListViewController: UIViewController
         return searchBar
     }()
     
-    let weatherListTableView: UITableView =
+    lazy var weatherListTableView: UITableView =
     {
         let tableView = UITableView()
         tableView.backgroundColor = UIColor.clear
@@ -102,8 +116,64 @@ class WeatherListViewController: UIViewController
         
         weatherListTableView.separatorStyle = .singleLine
         
+        
     }
     
+    // MARK: - 온도 단위 변환 함수
+    func updateTemperature()
+    {
+        if temperatureUnits == "C"
+        {
+            self.temperature = Int(round(Double(self.temperature - 32)) / 1.8)
+            self.highTemperature = Int(round(Double(self.highTemperature - 32)) / 1.8)
+            self.lowTemperature = Int(round(Double(self.lowTemperature - 32)) / 1.8)
+        }
+        
+        else
+        {
+            self.temperature = Int(round(Double(self.temperature) * 1.8) + 32)
+            self.highTemperature = Int(round(Double(self.highTemperature) * 1.8) + 32)
+            self.lowTemperature = Int(round(Double(self.lowTemperature) * 1.8) + 32)
+        }
+    }
+    
+    // MARK: - settingButton의 UIMenu와 변경된 온도 단위를 tableView에 적용
+    func updateMenu()
+    {
+        if temperatureUnits == "C" 
+        {
+            checkdCelsiusAction = .on
+            checkedFahrenheitAction = .off
+        }
+        
+        else
+        {
+            checkdCelsiusAction = .off
+            checkedFahrenheitAction = .on
+        }
+        
+        let edit = UIAction(title: "목록 편집", image: UIImage(systemName: "pencil"), state: .off, handler: { _ in print("목록 편집") })
+        let C = UIAction(title: "섭씨", image: UIImage(named: "°C"), state: checkdCelsiusAction, handler: { _ in
+            self.temperatureUnits = "C"
+            self.updateTemperature()
+            self.updateMenu()
+        })
+        let F = UIAction(title: "화씨", image: UIImage(named: "°F"), state: checkedFahrenheitAction, handler: { _ in
+            self.temperatureUnits = "F"
+            self.updateTemperature()
+            self.updateMenu()
+        })
+        let line = UIMenu(title: "", options: .displayInline, children: [C, F])
+        
+        let menu = UIMenu(title: "", children: [edit, line])
+        
+        
+        settingButton.menu = menu
+        
+        weatherListTableView.reloadData()
+    }
+    
+    // MARK: - 레이아웃 지정
     func addSubView()
     {
         view.addSubview(weatherLabel)
@@ -135,23 +205,18 @@ class WeatherListViewController: UIViewController
             weatherListTableView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             weatherListTableView.topAnchor.constraint(equalTo: locationSearchBar.bottomAnchor, constant: 15),
             weatherListTableView.widthAnchor.constraint(equalToConstant: 370),
-            weatherListTableView.heightAnchor.constraint(equalToConstant: 600),
+            weatherListTableView.heightAnchor.constraint(equalToConstant: 600)
         ])
     }
     
 }
 
-
+// MARK: - TableView extension
 extension WeatherListViewController: UITableViewDataSource, UITableViewDelegate
 {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int 
     {
         return data.count
-    }
-    
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat
-    {
-        return 1
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell 
@@ -163,9 +228,9 @@ extension WeatherListViewController: UITableViewDataSource, UITableViewDelegate
         cell.locationLabel.text = String(location)
         cell.timeOrCityLabel.text = time
         cell.weatherLabel.text = weather
-        cell.temperatureLabel.text = "\(temperature)°\(settingValue)"
-        cell.highTemperatureLabel.text = "최고\(highTemperature)°\(settingValue)"
-        cell.lowTemperatureLabel.text = "최저 \(lowTemperature)°\(settingValue)"
+        cell.temperatureLabel.text = "\(temperature)°\(temperatureUnits)"
+        cell.highTemperatureLabel.text = "최고\(highTemperature)°\(temperatureUnits)"
+        cell.lowTemperatureLabel.text = "최저 \(lowTemperature)°\(temperatureUnits)"
         
         return cell
     }
@@ -175,35 +240,36 @@ extension WeatherListViewController: UITableViewDataSource, UITableViewDelegate
             return 120
     }
     
+    
 }
 
 
-struct PreView: PreviewProvider
-{
-    static var previews: some View 
-    {
-        WeatherListViewController().toPreview()
-    }
-}
-
-
-#if DEBUG
-extension UIViewController {
-    private struct Preview: UIViewControllerRepresentable 
-    {
-        let viewController: UIViewController
-
-        func makeUIViewController(context: Context) -> UIViewController
-        {
-            return viewController
-        }
-
-        func updateUIViewController(_ uiViewController: UIViewController, context: Context) { }
-    }
-
-    func toPreview() -> some View
-    {
-        Preview(viewController: self)
-    }
-}
-#endif
+//struct PreView: PreviewProvider
+//{
+//    static var previews: some View 
+//    {
+//        WeatherListViewController().toPreview()
+//    }
+//}
+//
+//
+//#if DEBUG
+//extension UIViewController {
+//    private struct Preview: UIViewControllerRepresentable 
+//    {
+//        let viewController: UIViewController
+//
+//        func makeUIViewController(context: Context) -> UIViewController
+//        {
+//            return viewController
+//        }
+//
+//        func updateUIViewController(_ uiViewController: UIViewController, context: Context) { }
+//    }
+//
+//    func toPreview() -> some View
+//    {
+//        Preview(viewController: self)
+//    }
+//}
+//#endif

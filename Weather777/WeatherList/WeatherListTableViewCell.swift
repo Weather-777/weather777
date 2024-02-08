@@ -7,7 +7,8 @@
 
 import UIKit
 
-class WeatherListTableViewCell: UITableViewCell {
+class WeatherListTableViewCell: UITableViewCell
+{
 
     @IBOutlet weak var backgroundImage: UIImageView!
     
@@ -34,7 +35,9 @@ class WeatherListTableViewCell: UITableViewCell {
 
     override func setSelected(_ selected: Bool, animated: Bool) 
     {
-
+        
     }
     
 }
+
+
