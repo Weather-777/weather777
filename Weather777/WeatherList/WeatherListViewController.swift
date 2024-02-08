@@ -13,11 +13,13 @@ class WeatherListViewController: UIViewController
 {
     
     var location = 0
-    var weather = "맑음"
     var time = "17:00"
+    var weather = "맑음"
     var temperature = 7
     var highTemperature = 10
     var lowTemperature = 3
+    
+    var settingValue = 1
     
     
     let data = ["1", "2","3"]
@@ -34,16 +36,17 @@ class WeatherListViewController: UIViewController
         return label
     }()
     
-    let settingButton: UIButton =
+    lazy var settingButton: UIButton =
     {
         let button = UIButton()
-        button.setImage(UIImage(systemName: "ellipsis.circle"), for: .normal)
+        let config = UIImage.SymbolConfiguration(pointSize: 20, weight: .bold, scale: .medium)
+        button.setImage(UIImage(systemName: "ellipsis.circle", withConfiguration: config), for: .normal)
         button.tintColor = .white
         button.setTitleColor(.clear, for: .normal)
         
-        let edit = UIAction(title: "목록 편집", image: UIImage(systemName: "pencil"), handler: { _ in print("목록 편집") })
-        let C = UIAction(title: "섭씨", image: UIImage(named: "°C"), handler: { _ in print("섭씨 설정") })
-        let F = UIAction(title: "화씨", image: UIImage(named: "°F"), handler: { _ in print("화씨 설정") })
+        let edit = UIAction(title: "목록 편집", image: UIImage(systemName: "pencil"), state: .off, handler: { _ in print("목록 편집") })
+        let C = UIAction(title: "섭씨", image: UIImage(named: "°C"), handler: { _ in self.settingValue = 1 })
+        let F = UIAction(title: "화씨", image: UIImage(named: "°F"), handler: { _ in self.settingValue = 0 })
         let line = UIMenu(title: "", options: .displayInline, children: [C, F])
         
         let menu = UIMenu(title: "", children: [edit, line])
@@ -52,7 +55,7 @@ class WeatherListViewController: UIViewController
         button.menu = menu
         
         button.showsMenuAsPrimaryAction = true
-        button.changesSelectionAsPrimaryAction = true
+        button.changesSelectionAsPrimaryAction = false
         
         button.translatesAutoresizingMaskIntoConstraints = false
         
@@ -93,7 +96,11 @@ class WeatherListViewController: UIViewController
         
         weatherListTableView.dataSource = self
         weatherListTableView.delegate = self
-        weatherListTableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
+        
+        let nib = UINib(nibName: "WeatherListTableViewCell", bundle: nil)
+        weatherListTableView.register(nib, forCellReuseIdentifier: "WeatherListTableViewCell")
+        
+        weatherListTableView.separatorStyle = .singleLine
         
     }
     
@@ -103,7 +110,6 @@ class WeatherListViewController: UIViewController
         view.addSubview(settingButton)
         view.addSubview(locationSearchBar)
         view.addSubview(weatherListTableView)
-        
     }
     
     func setLayout()
@@ -122,12 +128,12 @@ class WeatherListViewController: UIViewController
         
             locationSearchBar.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             locationSearchBar.topAnchor.constraint(equalTo: weatherLabel.bottomAnchor, constant: 20),
-            locationSearchBar.widthAnchor.constraint(equalToConstant: 370),
+            locationSearchBar.widthAnchor.constraint(equalToConstant: 384),
             locationSearchBar.heightAnchor.constraint(equalToConstant: 30),
      
         
             weatherListTableView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            weatherListTableView.topAnchor.constraint(equalTo: locationSearchBar.bottomAnchor, constant: 20),
+            weatherListTableView.topAnchor.constraint(equalTo: locationSearchBar.bottomAnchor, constant: 15),
             weatherListTableView.widthAnchor.constraint(equalToConstant: 370),
             weatherListTableView.heightAnchor.constraint(equalToConstant: 600),
         ])
@@ -143,11 +149,30 @@ extension WeatherListViewController: UITableViewDataSource, UITableViewDelegate
         return data.count
     }
     
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat
+    {
+        return 1
+    }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell 
     {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
-        cell.textLabel?.text = data[indexPath.row]
+        let cell = tableView.dequeueReusableCell(withIdentifier: "WeatherListTableViewCell", for: indexPath) as! WeatherListTableViewCell
+        
+        cell.backgroundColor = .clear
+        cell.backgroundImage.image = UIImage(named: "weatherListCellBackground")
+        cell.locationLabel.text = String(location)
+        cell.timeOrCityLabel.text = time
+        cell.weatherLabel.text = weather
+        cell.temperatureLabel.text = "\(temperature)°\(settingValue)"
+        cell.highTemperatureLabel.text = "최고\(highTemperature)°\(settingValue)"
+        cell.lowTemperatureLabel.text = "최저 \(lowTemperature)°\(settingValue)"
+        
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
+    {
+            return 120
     }
     
 }
