@@ -4,6 +4,8 @@
 <dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>&quot;현재 위치 사용을 허용하시겠습니까?&quot;</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>&quot;사용자의 위치 정보를 받아오려고 합니다&quot;</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

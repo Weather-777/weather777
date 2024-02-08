@@ -8,36 +8,9 @@
 import UIKit
 import MapKit
 import SwiftUI
-//import SnapKit
+import SnapKit
 
-//struct PreView: PreviewProvider {
-//    static var previews: some View {
-//        MapViewController().toPreview()
-//    }
-//}
-//
-//#if DEBUG
-//extension UIViewController {
-//    private struct Preview: UIViewControllerRepresentable {
-//        let viewController: UIViewController
-//        
-//        func makeUIViewController(context: Context) -> UIViewController {
-//            return viewController
-//        }
-//        
-//        func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
-//        }
-//    }
-//    
-//    func toPreview() -> some View {
-//        Preview(viewController: self)
-//    }
-//}
-//#endif
-
-//MARK: - MapViewController
-
-class MapViewController: UIViewController, MKMapViewDelegate {
+class MapViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
     
     // MARK: - UIProperties
     
@@ -62,7 +35,6 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         
         return button
     }()
-    
     
     var centerLocateBtn: UIButton = {
         let button = UIButton()
@@ -133,6 +105,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         button1.backgroundColor = .gray
         button1.layer.cornerRadius = 5
         button1.tintColor = .white
+        
         view.addArrangedSubview(button1)
         
         let button2 = UIButton(type: .system)
@@ -144,6 +117,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         button2.backgroundColor = .gray
         button2.layer.cornerRadius = 5
         button2.tintColor = .white
+        
         view.addArrangedSubview(button2)
         
         let button3 = UIButton(type: .system)
@@ -155,10 +129,16 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         button3.backgroundColor = .gray
         button3.layer.cornerRadius = 5
         button3.tintColor = .white
+        
         view.addArrangedSubview(button3)
         
         return view
     }()
+
+    //LocationManager 호출
+    var locationManager = LocationManager.shared
+    
+    //MARK: - Life Cycle
     
     override func viewDidLoad() {
         
@@ -168,8 +148,42 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         view = mapView
         mapView.delegate = self
         
+        //유저 위치 보여주기
+        mapView.showsUserLocation = true
+        
+        addView()
+        addViewConstraints()
+        setRegion()
+    }
+    
+    //지역 설정
+    func setRegion() {
+        guard let currentLocation = locationManager.currentLocation else { return }
+        let center = CLLocationCoordinate2D(latitude: currentLocation.latitude, longitude: currentLocation.longitude)
+        let region = MKCoordinateRegion(center: center, span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1))
+        
+        mapView.setRegion(region, animated: true)
+    }
+    
+    //MARK: - AddSubView
+    
+    func addView() {
         //완료 버튼
         view.addSubview(completeBtn)
+        //위치 조정 버튼
+        view.addSubview(centerLocateBtn)
+        //현재 지역, 관심 지역 날씨 정보 리스트 팝업 버튼
+        view.addSubview(myLocationInfoBtn)
+        //날씨 정보 선택(강수랑, 온도, 대기질) 버튼
+        view.addSubview(infoSectionBtn)
+        //날씨 정보 선택 버튼 선택 시 나타나는 드롭다운 뷰
+        view.addSubview(infoSectionDropdownView)
+    }
+    
+    //MARK: - View Constraints
+    
+    func addViewConstraints() {
+        
         completeBtn.snp.makeConstraints { make in
             make.top.equalTo(view.snp.top).inset(60)
             make.leading.equalTo(view.snp.leading).inset(20)
@@ -177,32 +191,24 @@ class MapViewController: UIViewController, MKMapViewDelegate {
             make.width.equalTo(70)
         }
         
-        //위치 조정 버튼
-        view.addSubview(centerLocateBtn)
         centerLocateBtn.snp.makeConstraints { make in
             make.top.equalTo(view.snp.top).inset(60)
             make.trailing.equalTo(view.snp.trailing).inset(20)
             make.size.equalTo(40)
         }
         
-        //현재 지역, 관심 지역 날씨 정보 리스트 팝업 버튼
-        view.addSubview(myLocationInfoBtn)
         myLocationInfoBtn.snp.makeConstraints { make in
             make.top.equalTo(centerLocateBtn.snp.bottom)
             make.trailing.equalTo(view.snp.trailing).inset(20)
             make.size.equalTo(40)
         }
         
-        //날씨 정보 선택(강수랑, 온도, 대기질) 버튼
-        view.addSubview(infoSectionBtn)
         infoSectionBtn.snp.makeConstraints { make in
             make.top.equalTo(myLocationInfoBtn.snp.bottom).inset(-20)
             make.trailing.equalTo(view.snp.trailing).inset(20)
             make.size.equalTo(40)
         }
         
-        //날씨 정보 선택 버튼 선택 시 나타나는 드롭다운 뷰
-        view.addSubview(infoSectionDropdownView)
         infoSectionDropdownView.snp.makeConstraints { make in
             make.top.equalTo(infoSectionBtn.snp.bottom)
             make.trailing.equalTo(view.snp.trailing).inset(50)
@@ -219,11 +225,13 @@ class MapViewController: UIViewController, MKMapViewDelegate {
 extension MapViewController {
     
     @objc func goToMainView() {
-        print(1)
+        //이전 메인 뷰로 돌아가기(present로 mapView열림)
+        dismiss(animated: true)
     }
     
     @objc func goToMyLocation() {
-        print(2)
+        //현재 위치(지역)으로 돌아감
+        setRegion()
     }
     
     @objc func showLocationInfo() {
@@ -231,6 +239,7 @@ extension MapViewController {
     }
     
     @objc func changeInfo() {
+        //infoSection 버튼 나타내기, 숨기기 적요
         infoSectionDropdownView.isHidden = !infoSectionDropdownView.isHidden
     }
 }
