@@ -63,6 +63,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         guard let location = locations.last else { return }
         //업데이트 되는 위치의 좌표를 currentLocation에 넣어줌
         currentLocation = location.coordinate
+        onLocationUpdate?(currentLocation!)
         print(location.coordinate)
     }
     
