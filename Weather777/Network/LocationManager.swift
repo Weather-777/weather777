@@ -30,27 +30,49 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
     }
+    
     // 현재 위치를 요청하는 메소드
     public func requestLocation() {
+        //권한 요청하기
         locationManager.requestWhenInUseAuthorization()
+        //위치 요청
         locationManager.requestLocation()
     }
     
     //MARK: - CLLocationManagerDelegate
-    public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard let location = locations.last else { return }
-        currentLocation = location.coordinate
-        onLocationUpdate?(currentLocation!)
+    
+    //권한 상태 확인
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        switch manager.authorizationStatus {
+        case .authorizedWhenInUse:
+            //권한 허가일 경우 현재 위치 업데이트
+            manager.startUpdatingLocation()
+        case .denied, .restricted:
+            // alert 구현
+            print("denied")
+        case .notDetermined:
+            //결정이 안되었을 경우 권한 요청
+            manager.requestWhenInUseAuthorization()
+        default:
+            return
+        }
     }
     
+    //현재 위치를 받아오는 함수
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let location = locations.last else { return }
+        //업데이트 되는 위치의 좌표를 currentLocation에 넣어줌
+        currentLocation = location.coordinate
+        print(location.coordinate)
+    }
+    
+    //현재 위치를 받지 못할 경우 에러 구문 출력
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        print("Failed to get location: \(error)")
+        print("didFailedWithError")
     }
     
     public func setLocation(latitude: Double, longitude: Double) {
         currentLocation = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
     }
-    
-    
 }
 
