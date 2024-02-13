@@ -9,36 +9,37 @@ import UIKit
 import MapKit
 import SwiftUI
 
-// MARK: - PreView
-struct PreView: PreviewProvider
-{
-    static var previews: some View
-    {
-        WeatherListViewController().toPreview()
-    }
-}
+//// MARK: - PreView
+//struct PreView: PreviewProvider
+//{
+//    static var previews: some View
+//    {
+//        WeatherListViewController().toPreview()
+//    }
+//}
+//
+//
+//#if DEBUG
+//extension UIViewController {
+//    private struct Preview: UIViewControllerRepresentable
+//    {
+//        let viewController: UIViewController
+//
+//        func makeUIViewController(context: Context) -> UIViewController
+//        {
+//            return viewController
+//        }
+//
+//        func updateUIViewController(_ uiViewController: UIViewController, context: Context) { }
+//    }
+//
+//    func toPreview() -> some View
+//    {
+//        Preview(viewController: self)
+//    }
+//}
+//#endif
 
-
-#if DEBUG
-extension UIViewController {
-    private struct Preview: UIViewControllerRepresentable
-    {
-        let viewController: UIViewController
-
-        func makeUIViewController(context: Context) -> UIViewController
-        {
-            return viewController
-        }
-
-        func updateUIViewController(_ uiViewController: UIViewController, context: Context) { }
-    }
-
-    func toPreview() -> some View
-    {
-        Preview(viewController: self)
-    }
-}
-#endif
 
 class WeatherListViewController: UIViewController
 {
@@ -55,7 +56,7 @@ class WeatherListViewController: UIViewController
     var checkdCelsiusAction: UIMenuElement.State = .on
     var checkedFahrenheitAction: UIMenuElement.State = .off
     
-    var search = MKLocalSearchCompleter()
+    var searchCompleter = MKLocalSearchCompleter()
     var searchResults = [MKLocalSearchCompletion]()
     
     let data = ["1", "2","3"]
@@ -117,7 +118,14 @@ class WeatherListViewController: UIViewController
         searchBar.barTintColor = UIColor.clear
         searchBar.searchTextField.textColor = .white
         
+        searchBar.autocorrectionType = .no
+        searchBar.spellCheckingType = .no
+        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).title = "취소"
+        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.white], for: .normal)
+        
         searchBar.translatesAutoresizingMaskIntoConstraints = false
+        
+        
         
         return searchBar
     }()
@@ -140,18 +148,21 @@ class WeatherListViewController: UIViewController
         return tableView
     }()
     
-    // MARK: - viewDidLoad
+// MARK: - Life Cycle
     override func viewDidLoad()
     {
         super.viewDidLoad()
         self.view.backgroundColor = .black
-        
+            
         addSubView()
         setLayout()
+            
+        locationSearchBar.delegate = self
         
-        search.delegate = self
-        search.resultTypes = .address
         
+        
+        searchCompleter.delegate = self
+        searchCompleter.resultTypes = .address
         weatherListTableView.dataSource = self
         weatherListTableView.delegate = self
         searchResultTableView.dataSource = self
@@ -163,11 +174,9 @@ class WeatherListViewController: UIViewController
         searchResultTableView.register(searchListnib, forCellReuseIdentifier: "SearchResultTableViewCell")
         
         weatherListTableView.separatorStyle = .singleLine
-        
-        
     }
     
-    // MARK: - 온도 단위 변환 함수
+// MARK: - 온도 단위 변환 함수
     func updateTemperature()
     {
         if temperatureUnits == "C"
@@ -185,7 +194,7 @@ class WeatherListViewController: UIViewController
         }
     }
     
-    // MARK: - settingButton의 UIMenu와 변경된 온도 단위를 tableView에 적용
+// MARK: - settingButton의 UIMenu와 변경된 온도 단위를 tableView에 적용
     func updateMenu()
     {
         if temperatureUnits == "C" 
@@ -221,13 +230,12 @@ class WeatherListViewController: UIViewController
         weatherListTableView.reloadData()
     }
     
-    // MARK: - 레이아웃 지정
+// MARK: - 레이아웃 지정
     func addSubView()
     {
         view.addSubview(weatherLabel)
         view.addSubview(settingButton)
         view.addSubview(locationSearchBar)
-        view.addSubview(searchResultTableView)
         view.addSubview(weatherListTableView)
     }
     
@@ -258,32 +266,57 @@ class WeatherListViewController: UIViewController
         ])
     }
     
+// MARK: - 키보드 설정
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?)
+    {
+        // 터치 이벤트를 감지하여 키보드를 닫음
+        self.view.endEditing(true)
+    }
 }
-
 
 // MARK: - SearchBar extension
 extension WeatherListViewController: UISearchBarDelegate
 {
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) 
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String)
     {
-        search.queryFragment = searchText
+        if searchText.isEmpty 
+        {
+            searchResults.removeAll()
+            searchResultTableView.reloadData()
+        }
+        searchCompleter.queryFragment = searchText
+    }
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) 
+    {
+        searchBar.resignFirstResponder()
+    }
+    
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar)
+    {
+        searchBar.setShowsCancelButton(true, animated: true)
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) 
+    {
+        // SearchBar의 텍스트를 지우고, 키보드를 닫음
+        searchBar.text = ""
+        searchBar.resignFirstResponder()
+        searchBar.setShowsCancelButton(false, animated: true)
     }
 }
 
 // MARK: - MKLocalSearchCompleterDelegate
 extension WeatherListViewController: MKLocalSearchCompleterDelegate
 {
-    // 자동완성 완료 시에 결과를 받는 함수
     func completerDidUpdateResults(_ completer: MKLocalSearchCompleter)
     {
-        // completer.results를 통해 검색한 결과를 searchResults에 담아줍니다
         searchResults = completer.results
         searchResultTableView.reloadData()
     }
     
     func completer(_ completer: MKLocalSearchCompleter, didFailWithError error: Error) 
     {
-        // 에러 확인
         print(error.localizedDescription)
     }
 }
@@ -318,7 +351,6 @@ extension WeatherListViewController: UITableViewDataSource, UITableViewDelegate
         }
         
         else
-        
         {
             let cell = tableView.dequeueReusableCell(withIdentifier: "WeatherListTableViewCell", for: indexPath) as! WeatherListTableViewCell
             
@@ -363,6 +395,4 @@ extension WeatherListViewController: UITableViewDataSource, UITableViewDelegate
             return 120
         }
     }
-    
-    
 }
