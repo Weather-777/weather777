@@ -41,7 +41,7 @@ class ViewController: UIViewController, UISearchBarDelegate, UIGestureRecognizer
         let latitude = 37.4536
         let longitude = 126.7317
         
-        var forecastData: [(time: String, weatherIcon: String, temperature: Double, wind: String)] = []
+        var forecastData: [(time: String, weatherIcon: String, temperature: Double, wind: String, humidity: Int, tempMin: Double, tempMax: Double, feelsLike: Double, rainfall: Double)] = []
 
         WeatherManager.shared.getForecastWeather(latitude: latitude, longitude: longitude) { result in
             switch result {
@@ -55,6 +55,11 @@ class ViewController: UIViewController, UISearchBarDelegate, UIGestureRecognizer
                     print("Weather Icon: \(forecast.weatherIcon)")
                     print("Temperature: \(forecast.temperature)°C")
                     print("Wind Speed: \(forecast.wind)")
+                    print("humidity: \(forecast.humidity)%")
+                    print("tempMin: \(forecast.tempMin)")
+                    print("tempMax: \(forecast.tempMax)")
+                    print("feelsLike: \(forecast.feelsLike)")
+                    print("rainfall: \(forecast.rainfall)ml")
                     print("----------")
                 }
                 
