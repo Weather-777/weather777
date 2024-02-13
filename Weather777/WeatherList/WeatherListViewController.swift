@@ -56,10 +56,7 @@ class WeatherListViewController: UIViewController
     var checkdCelsiusAction: UIMenuElement.State = .on
     var checkedFahrenheitAction: UIMenuElement.State = .off
     
-    var searchCompleter = MKLocalSearchCompleter()
-    var searchResults = [MKLocalSearchCompletion]()
-    
-    let data = ["1", "2","3"]
+    var data: [String] = []
     
     let weatherLabel: UILabel =
     {
@@ -125,8 +122,6 @@ class WeatherListViewController: UIViewController
         
         searchBar.translatesAutoresizingMaskIntoConstraints = false
         
-        
-        
         return searchBar
     }()
     
@@ -136,14 +131,6 @@ class WeatherListViewController: UIViewController
         tableView.backgroundColor = .clear
         
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        
-        return tableView
-    }()
-    
-    let searchResultTableView: UITableView =
-    {
-        let tableView = UITableView()
-        tableView.backgroundColor = .clear
         
         return tableView
     }()
@@ -159,20 +146,12 @@ class WeatherListViewController: UIViewController
             
         locationSearchBar.delegate = self
         
-        
-        
-        searchCompleter.delegate = self
-        searchCompleter.resultTypes = .address
         weatherListTableView.dataSource = self
         weatherListTableView.delegate = self
-        searchResultTableView.dataSource = self
-        searchResultTableView.delegate = self
         
         let weatherListnib = UINib(nibName: "WeatherListTableViewCell", bundle: nil)
         weatherListTableView.register(weatherListnib, forCellReuseIdentifier: "WeatherListTableViewCell")
-        let searchListnib = UINib(nibName: "SearchResultTableViewCell", bundle: nil)
-        searchResultTableView.register(searchListnib, forCellReuseIdentifier: "SearchResultTableViewCell")
-        
+
         weatherListTableView.separatorStyle = .singleLine
     }
     
@@ -266,27 +245,11 @@ class WeatherListViewController: UIViewController
         ])
     }
     
-// MARK: - 키보드 설정
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?)
-    {
-        // 터치 이벤트를 감지하여 키보드를 닫음
-        self.view.endEditing(true)
-    }
 }
 
 // MARK: - SearchBar extension
 extension WeatherListViewController: UISearchBarDelegate
 {
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String)
-    {
-        if searchText.isEmpty 
-        {
-            searchResults.removeAll()
-            searchResultTableView.reloadData()
-        }
-        searchCompleter.queryFragment = searchText
-    }
-    
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) 
     {
         searchBar.resignFirstResponder()
@@ -295,6 +258,20 @@ extension WeatherListViewController: UISearchBarDelegate
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar)
     {
         searchBar.setShowsCancelButton(true, animated: true)
+        settingButton.isHidden = true
+        weatherLabel.isHidden = true
+        
+        let addToListVC = SearchViewController()
+        addToListVC.modalPresentationStyle = .overCurrentContext
+        addToListVC.view.backgroundColor = UIColor.black.withAlphaComponent(0.5) // 반투명한 검은색
+        present(addToListVC, animated: true, completion: nil)
+        
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?)
+    {
+        locationSearchBar.setShowsCancelButton(false, animated: true)
+        self.view.endEditing(true)
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) 
@@ -303,21 +280,8 @@ extension WeatherListViewController: UISearchBarDelegate
         searchBar.text = ""
         searchBar.resignFirstResponder()
         searchBar.setShowsCancelButton(false, animated: true)
-    }
-}
-
-// MARK: - MKLocalSearchCompleterDelegate
-extension WeatherListViewController: MKLocalSearchCompleterDelegate
-{
-    func completerDidUpdateResults(_ completer: MKLocalSearchCompleter)
-    {
-        searchResults = completer.results
-        searchResultTableView.reloadData()
-    }
-    
-    func completer(_ completer: MKLocalSearchCompleter, didFailWithError error: Error) 
-    {
-        print(error.localizedDescription)
+        settingButton.isHidden = false
+        weatherLabel.isHidden = false
     }
 }
 
@@ -326,32 +290,11 @@ extension WeatherListViewController: UITableViewDataSource, UITableViewDelegate
 {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int 
     {
-        if tableView == searchResultTableView
-        {
-            return searchResults.count
-        }
-        
-        else
-        {
             return data.count
-        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell 
     {
-        
-        if tableView == searchResultTableView
-        {
-           let cell = tableView.dequeueReusableCell(withIdentifier: "SearchResultTableViewCell", for: indexPath) as! SearchResultTableViewCell
-                    
-            cell.locationLabel.text = searchResults[indexPath.row].title
-            cell.backgroundColor = .clear
-            
-            return cell
-        }
-        
-        else
-        {
             let cell = tableView.dequeueReusableCell(withIdentifier: "WeatherListTableViewCell", for: indexPath) as! WeatherListTableViewCell
             
             cell.backgroundColor = .clear
@@ -364,35 +307,24 @@ extension WeatherListViewController: UITableViewDataSource, UITableViewDelegate
             cell.lowTemperatureLabel.text = "최저 \(lowTemperature)°\(temperatureUnits)"
             
             return cell
-        }
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) 
     {
-        if tableView == searchResultTableView
-        {
-            let addToListVC = AddToListViewController()
-            present(addToListVC, animated: true, completion: nil)
-        }
-        
-        else
-        {
+//            UIView.animate(withDuration: 0.5)
+//            {
+//                // label의 frame을 새로운 위치로 이동시킴
+//                self.weatherLabel.frame.origin = CGPoint(x: 20,y: -100)
+//                self.settingButton.frame.origin = CGPoint(x: 350, y: -100)
+//                
+//            }
             let addToListVC = MainViewController()
             addToListVC.modalPresentationStyle = .fullScreen
             present(addToListVC, animated: true, completion: nil)
-        }
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
     {
-        if tableView == searchResultTableView
-        {
-            return 30
-        }
-        
-        else
-        {
             return 120
-        }
     }
 }

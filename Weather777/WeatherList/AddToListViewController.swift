@@ -11,8 +11,10 @@ import SwiftUI
 class AddToListViewController: UIViewController 
 {
 
-    weak var weatherListVC = WeatherListViewController()
-    var index: Int = 0
+    weak var weatherListVC: WeatherListViewController?
+    
+    var location = 0
+    var index = "데이터"
     
     lazy var cancelButton: UIButton =
     {
@@ -41,7 +43,10 @@ class AddToListViewController: UIViewController
     override func viewDidLoad()
     {
         super.viewDidLoad()
-        self.view.backgroundColor = .black
+        
+        weatherListVC = parent as? WeatherListViewController
+        
+        self.view.backgroundColor = .white
         
         addSubView()
         setLayout()
@@ -60,12 +65,12 @@ class AddToListViewController: UIViewController
         
         NSLayoutConstraint.activate([
             cancelButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
-            cancelButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 30),
+            cancelButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 80),
             cancelButton.widthAnchor.constraint(equalToConstant: 40),
             cancelButton.heightAnchor.constraint(equalToConstant: 20),
             
             addButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
-            addButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 20),
+            addButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 80),
             addButton.widthAnchor.constraint(equalToConstant: 40),
             addButton.heightAnchor.constraint(equalToConstant: 30)
         ])
@@ -78,9 +83,9 @@ class AddToListViewController: UIViewController
     
     @objc func addLocation()
     {
-        weatherListVC?.weatherInformation.append(index)
-        print("확인")
-        index += 1
+        weatherListVC?.data.append(index)
+        weatherListVC?.weatherListTableView.reloadData()
+        print("추가 \(index)")
     }
     
 }
