@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "목록 버튼.png",
+      "filename" : "WeatherList.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "목록 버튼@2x.png",
+      "filename" : "WeatherList@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "목록 버튼@3x.png",
+      "filename" : "WeatherList@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
