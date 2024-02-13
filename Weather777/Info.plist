@@ -2,8 +2,19 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Roboto-Black.ttf</string>
+		<string>Roboto-Bold.ttf</string>
+		<string>Roboto-Medium.ttf</string>
+		<string>Roboto-Regular.ttf</string>
+		<string>Roboto-Light.ttf</string>
+		<string>Roboto-Thin.ttf</string>
+	</array>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>&quot;현재 위치 사용을 허용하시겠습니까?&quot;</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>&quot;사용자의 위치 정보를 받아오려고 합니다&quot;</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

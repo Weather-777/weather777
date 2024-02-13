@@ -12,9 +12,6 @@ import CoreLocation
 
 class ViewController: UIViewController, UISearchBarDelegate, UIGestureRecognizerDelegate {
     
-    
-//    var weatherDataArray = [WeatherData]()
-    
     var weather: Weather?
     var main: MainClass?
     
@@ -41,9 +38,39 @@ class ViewController: UIViewController, UISearchBarDelegate, UIGestureRecognizer
         setAddSubView()
         setLayout()
 
-        // 3시간 뒤의 최고 온도와 최저 온도 업데이트
-        updateForecastWeather()
+        let latitude = 37.4536
+        let longitude = 126.7317
         
+        var forecastData: [(time: String, weatherIcon: String, temperature: Double, wind: String, humidity: Int, tempMin: Double, tempMax: Double, feelsLike: Double, rainfall: Double)] = []
+
+        WeatherManager.shared.getForecastWeather(latitude: latitude, longitude: longitude) { result in
+            switch result {
+            case .success(let data):
+                forecastData = data
+                
+                // forecastData 배열에 데이터가 들어갔는지 확인
+
+                for forecast in forecastData {
+                    print("Time: \(forecast.time)")
+                    print("Weather Icon: \(forecast.weatherIcon)")
+                    print("Temperature: \(forecast.temperature)°C")
+                    print("Wind Speed: \(forecast.wind)")
+                    print("humidity: \(forecast.humidity)%")
+                    print("tempMin: \(forecast.tempMin)")
+                    print("tempMax: \(forecast.tempMax)")
+                    print("feelsLike: \(forecast.feelsLike)")
+                    print("rainfall: \(forecast.rainfall)ml")
+                    print("----------")
+                }
+                
+            case .failure(let error):
+                print("Error: \(error)")
+            }
+        }
+        
+        
+        // 3시간 뒤의 최고 온도와 최저 온도 업데이트
+//        updateForecastWeather()
         // 위치정보를 가져오는 시간이 걸리더라도 날씨정보를 우선 업데이트해서 UI를 변경하여 viewDidLoad()에서 즉시 반환
 //        LocationManager.shared.requestLocation()
     }
@@ -107,49 +134,49 @@ extension ViewController {
         ])
     }
     
-    private func updateForecastWeather() {
-        // 위치정보 설정
-        let latitude = 37.4536
-        let longitude = 126.7317
-        LocationManager.shared.setLocation(latitude: latitude, longitude: longitude)
-        
-        // 날씨 정보 가져오기
-        WeatherManager.shared.getForecastWeather(latitude: latitude, longitude: longitude) { result in
-            switch result {
-            case .success(let weatherData):
-                // 성공적으로 데이터를 가져왔을 때의 처리
-                if let list = weatherData.list.first {
-                    let maxTemp = list.main.tempMax
-                    let minTemp = list.main.tempMin
-                    let weatherIconString = list.weather.first?.icon ?? ""
-                    
-                    // 아이콘 이미지 다운로드
-                    let urlString = "https://openweathermap.org/img/wn/\(weatherIconString)@2x.png"
-                    guard let url = URL(string: urlString) else {
-                        return
-                    }
-                    
-                    let session = URLSession.shared
-                    let task = session.dataTask(with: url) { (data, response, error) in
-                        guard let data = data, error == nil else {
-                            return
-                        }
-                        
-                        DispatchQueue.main.async {
-                            self.weatherImage.image = UIImage(data: data)
-                            self.tempLabel.text = "현재 온도: \(String(describing: list.main.temp))"
-                            self.maxTempLabel.text = "최고 온도: \(maxTemp)"
-                            self.minTempLabel.text = "최저 온도: \(minTemp)"
-                        }
-                    }
-                    task.resume()
-                }
-            case .failure(let error):
-                // 에러 발생 시 처리
-                print(error)
-            }
-        }
-    }
+//    private func updateForecastWeather() {
+//        // 위치정보 설정
+//        let latitude = 37.4536
+//        let longitude = 126.7317
+//        LocationManager.shared.setLocation(latitude: latitude, longitude: longitude)
+//        // 날씨 정보 가져오기
+//        WeatherManager.shared.getForecastWeather(latitude: latitude, longitude: longitude) { result in
+//            switch result {
+//            case .success(let weatherData):
+//                // 성공적으로 데이터를 가져왔을 때의 처리
+//                if let list = weatherData.list.first {
+//                    let maxTemp = list.main.tempMax
+//                    let minTemp = list.main.tempMin
+//                    let weatherIconString = list.weather.first?.icon ?? ""
+//                    
+//                    // 아이콘 이미지 다운로드
+//                    let urlString = "https://openweathermap.org/img/wn/\(weatherIconString)@2x.png"
+//                    guard let url = URL(string: urlString) else {
+//                        return
+//                    }
+//                    
+//                    let session = URLSession.shared
+//                    let task = session.dataTask(with: url) { (data, response, error) in
+//                        guard let data = data, error == nil else {
+//                            return
+//                        }
+//                        
+//                        DispatchQueue.main.async {
+//                            self.weatherImage.image = UIImage(data: data)
+//                            self.tempLabel.text = "현재 온도: \(String(describing: list.main.temp))"
+//                            self.maxTempLabel.text = "최고 온도: \(maxTemp)"
+//                            self.minTempLabel.text = "최저 온도: \(minTemp)"
+//                        }
+//                    }
+//                    task.resume()
+//                }
+//            case .failure(let error):
+//                // 에러 발생 시 처리
+//                print(error)
+//            }
+//        }
+//    }
+    
 
     
 } // extension
