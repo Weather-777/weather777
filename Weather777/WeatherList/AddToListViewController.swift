@@ -11,6 +11,9 @@ import SwiftUI
 class AddToListViewController: UIViewController 
 {
 
+    weak var weatherListVC = WeatherListViewController()
+    var index: Int = 0
+    
     lazy var cancelButton: UIButton =
     {
         let button = UIButton()
@@ -67,46 +70,48 @@ class AddToListViewController: UIViewController
             addButton.heightAnchor.constraint(equalToConstant: 30)
         ])
     }
-        
+    
     @objc func closeView()
     {
-        
+        dismiss(animated: true, completion: nil)
     }
     
     @objc func addLocation()
     {
-        
+        weatherListVC?.weatherInformation.append(index)
+        print("확인")
+        index += 1
     }
     
 }
 
 
-struct PreView: PreviewProvider
-{
-    static var previews: some View
-    {
-        AddToListViewController().toPreview()
-    }
-}
-
-
-#if DEBUG
-extension UIViewController {
-    private struct Preview: UIViewControllerRepresentable
-    {
-        let viewController: UIViewController
-
-        func makeUIViewController(context: Context) -> UIViewController
-        {
-            return viewController
-        }
-
-        func updateUIViewController(_ uiViewController: UIViewController, context: Context) { }
-    }
-
-    func toPreview() -> some View
-    {
-        Preview(viewController: self)
-    }
-}
-#endif
+//struct PreView: PreviewProvider
+//{
+//    static var previews: some View
+//    {
+//        AddToListViewController().toPreview()
+//    }
+//}
+//
+//
+//#if DEBUG
+//extension UIViewController {
+//    private struct Preview: UIViewControllerRepresentable
+//    {
+//        let viewController: UIViewController
+//
+//        func makeUIViewController(context: Context) -> UIViewController
+//        {
+//            return viewController
+//        }
+//
+//        func updateUIViewController(_ uiViewController: UIViewController, context: Context) { }
+//    }
+//
+//    func toPreview() -> some View
+//    {
+//        Preview(viewController: self)
+//    }
+//}
+//#endif

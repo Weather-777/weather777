@@ -11,6 +11,7 @@ import MapKit
 
 class WeatherListViewController: UIViewController
 {
+    var weatherInformation: [Any] = []
     
     var location = 0
     var time = "17:00"
@@ -23,6 +24,8 @@ class WeatherListViewController: UIViewController
     var checkdCelsiusAction: UIMenuElement.State = .on
     var checkedFahrenheitAction: UIMenuElement.State = .off
     
+    var search = MKLocalSearchCompleter()
+    var searchResults = [MKLocalSearchCompletion]()
     
     let data = ["1", "2","3"]
     
@@ -61,10 +64,9 @@ class WeatherListViewController: UIViewController
             self.updateTemperature()
             self.updateMenu()
         })
+        
         let line = UIMenu(title: "", options: .displayInline, children: [C, F])
-        
         let menu = UIMenu(title: "", children: [edit, line])
-        
         
         button.menu = menu
         
@@ -89,17 +91,25 @@ class WeatherListViewController: UIViewController
         return searchBar
     }()
     
-    lazy var weatherListTableView: UITableView =
+    let weatherListTableView: UITableView =
     {
         let tableView = UITableView()
-        tableView.backgroundColor = UIColor.clear
+        tableView.backgroundColor = .clear
         
         tableView.translatesAutoresizingMaskIntoConstraints = false
         
         return tableView
     }()
-
     
+    let searchResultTableView: UITableView =
+    {
+        let tableView = UITableView()
+        tableView.backgroundColor = .clear
+        
+        return tableView
+    }()
+    
+    // MARK: - viewDidLoad
     override func viewDidLoad()
     {
         super.viewDidLoad()
@@ -108,11 +118,18 @@ class WeatherListViewController: UIViewController
         addSubView()
         setLayout()
         
+        search.delegate = self
+        search.resultTypes = .address
+        
         weatherListTableView.dataSource = self
         weatherListTableView.delegate = self
+        searchResultTableView.dataSource = self
+        searchResultTableView.delegate = self
         
-        let nib = UINib(nibName: "WeatherListTableViewCell", bundle: nil)
-        weatherListTableView.register(nib, forCellReuseIdentifier: "WeatherListTableViewCell")
+        let weatherListnib = UINib(nibName: "WeatherListTableViewCell", bundle: nil)
+        weatherListTableView.register(weatherListnib, forCellReuseIdentifier: "WeatherListTableViewCell")
+        let searchListnib = UINib(nibName: "SearchResultTableViewCell", bundle: nil)
+        searchResultTableView.register(searchListnib, forCellReuseIdentifier: "SearchResultTableViewCell")
         
         weatherListTableView.separatorStyle = .singleLine
         
@@ -179,6 +196,7 @@ class WeatherListViewController: UIViewController
         view.addSubview(weatherLabel)
         view.addSubview(settingButton)
         view.addSubview(locationSearchBar)
+        view.addSubview(searchResultTableView)
         view.addSubview(weatherListTableView)
     }
     
@@ -211,65 +229,140 @@ class WeatherListViewController: UIViewController
     
 }
 
+
+// MARK: - SearchBar extension
+extension WeatherListViewController: UISearchBarDelegate
+{
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) 
+    {
+        search.queryFragment = searchText
+    }
+}
+
+// MARK: - MKLocalSearchCompleterDelegate
+extension WeatherListViewController: MKLocalSearchCompleterDelegate
+{
+    // 자동완성 완료 시에 결과를 받는 함수
+    func completerDidUpdateResults(_ completer: MKLocalSearchCompleter)
+    {
+        // completer.results를 통해 검색한 결과를 searchResults에 담아줍니다
+        searchResults = completer.results
+        searchResultTableView.reloadData()
+    }
+    
+    func completer(_ completer: MKLocalSearchCompleter, didFailWithError error: Error) 
+    {
+        // 에러 확인
+        print(error.localizedDescription)
+    }
+}
+
 // MARK: - TableView extension
 extension WeatherListViewController: UITableViewDataSource, UITableViewDelegate
 {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int 
     {
-        return data.count
+        if tableView == searchResultTableView
+        {
+            return searchResults.count
+        }
+        
+        else
+        {
+            return data.count
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell 
     {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "WeatherListTableViewCell", for: indexPath) as! WeatherListTableViewCell
         
-        cell.backgroundColor = .clear
-        cell.backgroundImage.image = UIImage(named: "weatherListCellBackground")
-        cell.locationLabel.text = String(location)
-        cell.timeOrCityLabel.text = time
-        cell.weatherLabel.text = weather
-        cell.temperatureLabel.text = "\(temperature)°\(temperatureUnits)"
-        cell.highTemperatureLabel.text = "최고\(highTemperature)°\(temperatureUnits)"
-        cell.lowTemperatureLabel.text = "최저 \(lowTemperature)°\(temperatureUnits)"
+        if tableView == searchResultTableView
+        {
+           let cell = tableView.dequeueReusableCell(withIdentifier: "SearchResultTableViewCell", for: indexPath) as! SearchResultTableViewCell
+                    
+            cell.locationLabel.text = searchResults[indexPath.row].title
+            cell.backgroundColor = .clear
+            
+            return cell
+        }
         
-        return cell
+        else
+        
+        {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "WeatherListTableViewCell", for: indexPath) as! WeatherListTableViewCell
+            
+            cell.backgroundColor = .clear
+            cell.backgroundImage.image = UIImage(named: "weatherListCellBackground")
+            cell.locationLabel.text = String(location)
+            cell.timeOrCityLabel.text = time
+            cell.weatherLabel.text = weather
+            cell.temperatureLabel.text = "\(temperature)°\(temperatureUnits)"
+            cell.highTemperatureLabel.text = "최고\(highTemperature)°\(temperatureUnits)"
+            cell.lowTemperatureLabel.text = "최저 \(lowTemperature)°\(temperatureUnits)"
+            
+            return cell
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) 
+    {
+        if tableView == searchResultTableView
+        {
+            let addToListVC = AddToListViewController()
+            present(addToListVC, animated: true, completion: nil)
+        }
+        
+        else
+        {
+            let addToListVC = MainViewController()
+            addToListVC.modalPresentationStyle = .fullScreen
+            present(addToListVC, animated: true, completion: nil)
+        }
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
     {
+        if tableView == searchResultTableView
+        {
+            return 30
+        }
+        
+        else
+        {
             return 120
+        }
     }
     
     
 }
 
 
-//struct PreView: PreviewProvider
-//{
-//    static var previews: some View 
-//    {
-//        WeatherListViewController().toPreview()
-//    }
-//}
-//
-//
-//#if DEBUG
-//extension UIViewController {
-//    private struct Preview: UIViewControllerRepresentable 
-//    {
-//        let viewController: UIViewController
-//
-//        func makeUIViewController(context: Context) -> UIViewController
-//        {
-//            return viewController
-//        }
-//
-//        func updateUIViewController(_ uiViewController: UIViewController, context: Context) { }
-//    }
-//
-//    func toPreview() -> some View
-//    {
-//        Preview(viewController: self)
-//    }
-//}
-//#endif
+struct PreView: PreviewProvider
+{
+    static var previews: some View 
+    {
+        WeatherListViewController().toPreview()
+    }
+}
+
+
+#if DEBUG
+extension UIViewController {
+    private struct Preview: UIViewControllerRepresentable 
+    {
+        let viewController: UIViewController
+
+        func makeUIViewController(context: Context) -> UIViewController
+        {
+            return viewController
+        }
+
+        func updateUIViewController(_ uiViewController: UIViewController, context: Context) { }
+    }
+
+    func toPreview() -> some View
+    {
+        Preview(viewController: self)
+    }
+}
+#endif
