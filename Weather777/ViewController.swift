@@ -16,7 +16,7 @@ class ViewController: UIViewController, UISearchBarDelegate, UIGestureRecognizer
     
     let testLabel: UILabel = {
         let label = UILabel()
-        label.text = "7팀 화이팅입니다.😃"
+        label.text = NSLocalizedString("Seoul", comment: "")
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -48,7 +48,8 @@ class ViewController: UIViewController, UISearchBarDelegate, UIGestureRecognizer
                 // forecastData 배열에 데이터가 들어갔는지 확인
 
                 for forecast in forecastData {
-                    print("citynam: \(forecast.cityname)")
+                    let cityNameInKorean = NSLocalizedString(forecast.cityname, comment: "")
+                    print("cityname: \(cityNameInKorean)")
                     print("Time: \(forecast.time)")
                     print("Weather Icon: \(forecast.weatherIcon)")
                     print("weatherdescription: \(forecast.weatherdescription)")
