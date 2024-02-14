@@ -32,6 +32,7 @@
 		C89ABB9C2B73AB1B006E2427 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = C89ABB9B2B73AB1B006E2427 /* SnapKit */; };
 		C89ABB9E2B73AB1B006E2427 /* SnapKit-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = C89ABB9D2B73AB1B006E2427 /* SnapKit-Dynamic */; };
 		C89ABBA12B73AB21006E2427 /* Then in Frameworks */ = {isa = PBXBuildFile; productRef = C89ABBA02B73AB21006E2427 /* Then */; };
+		C8AD18112B7C68BA0010688E /* WeatherDataProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8AD18102B7C68BA0010688E /* WeatherDataProcessor.swift */; };
 		CC1C99152B7BA9FE00ED4BC9 /* CustomAnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC1C99142B7BA9FE00ED4BC9 /* CustomAnnotationView.swift */; };
 		CC1C99172B7BAA0700ED4BC9 /* InfoModalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC1C99162B7BAA0700ED4BC9 /* InfoModalViewController.swift */; };
 /* End PBXBuildFile section */
@@ -60,6 +61,7 @@
 		C87623852B7123D600748961 /* WeatherListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherListViewController.swift; sourceTree = "<group>"; };
 		C87623892B71243400748961 /* WeatherModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherModel.swift; sourceTree = "<group>"; };
 		C876238B2B71244600748961 /* WeatherManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherManager.swift; sourceTree = "<group>"; };
+		C8AD18102B7C68BA0010688E /* WeatherDataProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherDataProcessor.swift; sourceTree = "<group>"; };
 		CC1C99142B7BA9FE00ED4BC9 /* CustomAnnotationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomAnnotationView.swift; sourceTree = "<group>"; };
 		CC1C99162B7BAA0700ED4BC9 /* InfoModalViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InfoModalViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -130,6 +132,7 @@
 			children = (
 				C87623892B71243400748961 /* WeatherModel.swift */,
 				C876238B2B71244600748961 /* WeatherManager.swift */,
+				C8AD18102B7C68BA0010688E /* WeatherDataProcessor.swift */,
 				C850FADC2B7AFE9C0034C70B /* URL+Extensions.swift */,
 				C850FADE2B7B5B240034C70B /* Double+Extensions.swift */,
 				C83FC9482B734C1000639179 /* LocationManager.swift */,
@@ -270,6 +273,7 @@
 				CC1C99172B7BAA0700ED4BC9 /* InfoModalViewController.swift in Sources */,
 				C87623842B71239F00748961 /* MapViewController.swift in Sources */,
 				C876238C2B71244600748961 /* WeatherManager.swift in Sources */,
+				C8AD18112B7C68BA0010688E /* WeatherDataProcessor.swift in Sources */,
 				C876238A2B71243400748961 /* WeatherModel.swift in Sources */,
 				C87623822B71239600748961 /* MainViewController.swift in Sources */,
 				C83FC9492B734C1000639179 /* LocationManager.swift in Sources */,
@@ -419,6 +423,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 335MYJGX88;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Weather777/Info.plist;
@@ -447,6 +452,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 335MYJGX88;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Weather777/Info.plist;

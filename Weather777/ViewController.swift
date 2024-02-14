@@ -12,9 +12,6 @@ import CoreLocation
 
 class ViewController: UIViewController, UISearchBarDelegate, UIGestureRecognizerDelegate {
     
-    var weather: Weather?
-    var main: MainClass?
-    
     // MARK: - UI Properties
     
     let testLabel: UILabel = {
@@ -67,16 +64,9 @@ class ViewController: UIViewController, UISearchBarDelegate, UIGestureRecognizer
                 print("Error: \(error)")
             }
         }
-        
-        
-        // 3시간 뒤의 최고 온도와 최저 온도 업데이트
-//        updateForecastWeather()
-        // 위치정보를 가져오는 시간이 걸리더라도 날씨정보를 우선 업데이트해서 UI를 변경하여 viewDidLoad()에서 즉시 반환
-//        LocationManager.shared.requestLocation()
     }
     
 }
-
 
 extension ViewController {
     func setUI() {
@@ -133,92 +123,5 @@ extension ViewController {
             minTempLabel.topAnchor.constraint(equalTo: maxTempLabel.bottomAnchor, constant: 20)
         ])
     }
-    
-//    private func updateForecastWeather() {
-//        // 위치정보 설정
-//        let latitude = 37.4536
-//        let longitude = 126.7317
-//        LocationManager.shared.setLocation(latitude: latitude, longitude: longitude)
-//        // 날씨 정보 가져오기
-//        WeatherManager.shared.getForecastWeather(latitude: latitude, longitude: longitude) { result in
-//            switch result {
-//            case .success(let weatherData):
-//                // 성공적으로 데이터를 가져왔을 때의 처리
-//                if let list = weatherData.list.first {
-//                    let maxTemp = list.main.tempMax
-//                    let minTemp = list.main.tempMin
-//                    let weatherIconString = list.weather.first?.icon ?? ""
-//                    
-//                    // 아이콘 이미지 다운로드
-//                    let urlString = "https://openweathermap.org/img/wn/\(weatherIconString)@2x.png"
-//                    guard let url = URL(string: urlString) else {
-//                        return
-//                    }
-//                    
-//                    let session = URLSession.shared
-//                    let task = session.dataTask(with: url) { (data, response, error) in
-//                        guard let data = data, error == nil else {
-//                            return
-//                        }
-//                        
-//                        DispatchQueue.main.async {
-//                            self.weatherImage.image = UIImage(data: data)
-//                            self.tempLabel.text = "현재 온도: \(String(describing: list.main.temp))"
-//                            self.maxTempLabel.text = "최고 온도: \(maxTemp)"
-//                            self.minTempLabel.text = "최저 온도: \(minTemp)"
-//                        }
-//                    }
-//                    task.resume()
-//                }
-//            case .failure(let error):
-//                // 에러 발생 시 처리
-//                print(error)
-//            }
-//        }
-//    }
-    
 
-    
 } // extension
-
-// 화씨를 섭씨로 전환하는 매소드
-extension ViewController {
-    func convertFahrenheitToCelsius(_ fahrenheit: Double) -> String? {
-        let celsiusUnit = UnitTemperature.celsius
-        let formatter = NumberFormatter()
-        formatter.maximumFractionDigits = 1
-        let celsius = celsiusUnit.converter.value(fromBaseUnitValue: fahrenheit)
-        if let formattedCelsius = formatter.string(from: celsius as NSNumber) {
-            return "\(formattedCelsius)°C"
-        }
-        return ""
-    }
-}
-
-
-// MARK: - Preview
-struct PreView: PreviewProvider {
-    static var previews: some View {
-        ViewController().toPreview()
-    }
-}
-
-#if DEBUG
-extension UIViewController {
-    private struct Preview: UIViewControllerRepresentable {
-        let viewController: UIViewController
-        
-        func makeUIViewController(context: Context) -> UIViewController {
-            return viewController
-        }
-        
-        func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
-        }
-    }
-    
-    func toPreview() -> some View {
-        Preview(viewController: self)
-    }
-}
-#endif
-

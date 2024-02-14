@@ -24,43 +24,7 @@ class WeatherManager {
     private init() {}
     
     // MARK: - public Methods
-    //현재 날씨정보 : LocationManager에서 위치정보를 받고, 위경도 API에 적용한 후, 날씨 데이터 값 복사 : 독립적인 인스턴스 생성
-    //https://api.openweathermap.org/data/2.5/weather?lat=37.565534&lon=126.977895&appid=3a33f61058f414d02d09e88bfa83117c
-    public func getLocationWeather(latitude: Double, longitude: Double, completion: @escaping(Result<WeatherData, NetworkError>) -> Void) {
-        LocationManager.shared.setLocation(latitude: latitude, longitude: longitude)
-        guard let currentLocation = LocationManager.shared.currentLocation else {
-            return completion(.failure(.badLocation))
-        }
-        
-        guard let url = URL.urlForWeatherForLocation(currentLocation, apiKey: apiKey) else {
-            return completion(.failure(.badUrl))
-        }
-        performRequest(with: url, completion: completion)
-    }
     
-    // OpenWeatherMap에서 지원하는 도시 검색 사이트 https://openweathermap.org/find?q
-    // 현재 날씨정보의 도시 기준, url test(인천) : https://api.openweathermap.org/data/2.5/weather?q=incheon&appid=3a33f61058f414d02d09e88bfa83117c
-    public func getCityWeather(city: String, completion: @escaping(Result<WeatherData, NetworkError>) -> Void) {
-        let formattedCity = city.replacingOccurrences(of: " ", with: "+")
-        guard let url = URL.urlForWeatherFor(formattedCity, apiKey: apiKey) else {
-            return completion(.failure(.badUrl))
-        }
-        performRequest(with: url, completion: completion)
-    }
-    
-//    // https://openweathermap.org/forecast5 5일치 3시간 단위 일기예보
-//    //test API call : api.openweathermap.org/data/2.5/forecast?lat=37.4536&lon=126.7317&appid=3a33f61058f414d02d09e88bfa83117c
-//    public func getForecastWeather(latitude: Double, longitude: Double, completion: @escaping(Result<WeatherData, NetworkError>) -> Void) {
-//        LocationManager.shared.setLocation(latitude: latitude, longitude: longitude)
-//        guard let currentLocation = LocationManager.shared.currentLocation else {
-//            return completion(.failure(.badLocation))
-//        }
-//        
-//        guard let url = URL.urlForForecastForLocation(currentLocation, apiKey: apiKey) else {
-//            return completion(.failure(.badUrl))
-//        }
-//        performRequestForecast(with: url, completion: completion)
-//    }
     public func getForecastWeather(latitude: Double, longitude: Double, completion: @escaping(Result<[(time: String, weatherIcon: String, temperature: Double, wind: String, humidity: Int, tempMin: Double, tempMax: Double, feelsLike: Double, rainfall: Double)], NetworkError>) -> Void) {
         // 위치데이터
         LocationManager.shared.setLocation(latitude: latitude, longitude: longitude)
@@ -76,29 +40,11 @@ class WeatherManager {
         //API call에서 데이터를 forecastData 배열에 넣기
         performRequestForecast(with: url) { result in
             switch result {
+                //performRequestForecast매소드에서 let weatherData = try JSONDecoder().decode(WeatherData.self, from: data) 이 성공했을 때,
             case .success(let weatherData):
                 // 날씨 데이터를 성공적으로 받아왔을 때
-                var forecastData: [(time: String, weatherIcon: String, temperature: Double, wind: String, humidity: Int, tempMin: Double, tempMax: Double, feelsLike: Double, rainfall: Double)] = []
-                
-                for list in weatherData.list {
-                    let time = list.dtTxt
-                    let weatherIcon = list.weather.first?.icon ?? ""
-                    let temperature = Double(list.main.temp)
-                    let celsiusTemperature = temperature.toCelsius()
-                    let windSpeed = list.wind.speed
-                    let humidity = list.main.humidity
-                    let tempMin = Double(list.main.tempMin)
-                    let tempMax = Double(list.main.tempMax)
-                    let celsiustempMin = tempMin.toCelsius()
-                    let celsiustempMax = tempMax.toCelsius()
-                    let feelsLike = Double(list.main.feelsLike)
-                    let celsiusfeelsLike = feelsLike.toCelsius()
-                    let rainfall = list.rain?.the3H ?? 0.0
-                    
-                    let forecast = (time: time, weatherIcon: weatherIcon, temperature: celsiusTemperature, wind: "\(windSpeed) m/s", humidity: humidity, tempMin: celsiustempMin, tempMax: celsiustempMax, feelsLike: celsiusfeelsLike, rainfall: rainfall)
-                    forecastData.append(forecast)
-                }
-                
+                let processor = WeatherDataProcessor()
+                let forecastData = processor.process(weatherData: weatherData)
                 completion(.success(forecastData))
                 
             case .failure(let error):
@@ -107,6 +53,8 @@ class WeatherManager {
             }
         }
     }
+    
+
     
     
 }
@@ -130,30 +78,6 @@ extension WeatherManager {
             }
             return value
         }
-    }
-    
-    // OpenWeatherMap의 API 요청시 현재 날씨정보를 처리하는 메소드
-    private func performRequest(with url: URL?, completion: @escaping (Result<WeatherData, NetworkError>) -> Void) {
-        guard let url = url else {
-            return completion(.failure(.badUrl))
-        }
-        
-        URLSession.shared.dataTask(with: url) { data, response, error in
-            // 응답과 에러,데이터 출력 : 정상출력됨
-            //            print("Data: \(String(describing: data))")
-            //            print("Response: \(String(describing: response))")
-            //            print("Error: \(String(describing: error))")
-            
-            guard let data = data, error == nil else {
-                return completion(.failure(.noData))
-            }
-            let weatherData = try? JSONDecoder().decode(WeatherData.self, from: data)
-            if let weatherData = weatherData {
-                completion(.success(weatherData))
-            } else {
-                completion(.failure(.decodingError))
-            }
-        }.resume()
     }
     
     // OpenWeatherMap의 API 요청시 5일치 3시간 단위 예보 날씨정보를 처리하는 메소드
@@ -181,7 +105,5 @@ extension WeatherManager {
             }
         }.resume()
     }
-    
-    
 }
 
