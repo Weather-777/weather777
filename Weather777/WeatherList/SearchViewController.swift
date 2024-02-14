@@ -10,9 +10,9 @@ import MapKit
 
 class SearchViewController: UIViewController
 {
-    weak var weatherListVC: WeatherListViewController?
-    weak var addToListVC: AddToListViewController?
-
+    let weatherListVC = WeatherListViewController()
+    let addToListVC = AddToListViewController()
+    
     var searchCompleter = MKLocalSearchCompleter()
     var searchResults = [MKLocalSearchCompletion]()
     
@@ -47,8 +47,7 @@ class SearchViewController: UIViewController
     override func viewDidLoad()
     {
         super.viewDidLoad()
-        weatherListVC = parent as? WeatherListViewController
-        addToListVC = parent as? AddToListViewController
+
         self.view.backgroundColor = .black
         
         addSubView()
@@ -133,7 +132,10 @@ extension SearchViewController: UISearchBarDelegate
         searchBar.text = ""
         searchBar.resignFirstResponder()
         searchBar.setShowsCancelButton(false, animated: true)
-        dismiss(animated: true, completion: nil)
+        dismiss(animated: true) {
+            self.weatherListVC.locationSearchBar.setShowsCancelButton(false, animated: true)
+            self.weatherListVC.showWeatherLabelAndSettingButton()
+        }
 //        settingButton.isHidden = false
 //        weatherLabel.isHidden = false
     }
@@ -175,13 +177,35 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate
         return cell
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
-    {
-        addToListVC?.location = CLLocationCoordinate2D(searchResults[indexPath.row])
-        let addToListVC = AddToListViewController()
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        var location: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 37.5670135, longitude: 126.9783740)
+
+        let selectedResult = searchResults[indexPath.row]
+        let searchRequest = MKLocalSearch.Request(completion: selectedResult)
+        let search = MKLocalSearch(request: searchRequest)
+
+        search.start { [self] response, error in
+            guard error == nil else { return }
+            guard let placemark = response?.mapItems.first?.placemark else { return }
+
+            location.latitude = placemark.coordinate.latitude
+            location.longitude = placemark.coordinate.longitude
+
+            // 이 시점에서 addToListVC를 present
+            self.addToListVC.location = location
+            self.addToListVC.aaa = 11
+            self.addToListVC.modalPresentationStyle = .pageSheet
+            present(addToListVC, animated: true, completion: nil)
+        }
+    }
+
+    func presentAddToListVC(with location: CLLocationCoordinate2D) {
+        addToListVC.location = location
+        addToListVC.aaa = 11
         addToListVC.modalPresentationStyle = .pageSheet
         present(addToListVC, animated: true, completion: nil)
     }
+
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
     {

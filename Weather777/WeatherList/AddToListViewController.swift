@@ -12,9 +12,10 @@ import SwiftUI
 class AddToListViewController: UIViewController 
 {
 
-    weak var weatherListVC: WeatherListViewController?
+    let weatherListVC = WeatherListViewController()
     
     var location: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 37.5670135, longitude: 126.9783740)
+    var aaa = 0
     var index = "데이터"
     
     lazy var cancelButton: UIButton =
@@ -45,12 +46,14 @@ class AddToListViewController: UIViewController
     {
         super.viewDidLoad()
         
-        weatherListVC = parent as? WeatherListViewController
         
         self.view.backgroundColor = .black
         
         addSubView()
         setLayout()
+        
+        print(location)
+        print(aaa)
     }
     
     
@@ -84,8 +87,8 @@ class AddToListViewController: UIViewController
     
     @objc func addLocation()
     {
-        weatherListVC?.data.append(index)
-        weatherListVC?.weatherListTableView.reloadData()
+        weatherListVC.data.append(index)
+        weatherListVC.weatherListTableView.reloadData()
         print("추가 \(index)")
     }
     

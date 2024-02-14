@@ -261,10 +261,10 @@ extension WeatherListViewController: UISearchBarDelegate
         settingButton.isHidden = true
         weatherLabel.isHidden = true
         
-        let addToListVC = SearchViewController()
-        addToListVC.modalPresentationStyle = .overCurrentContext
-        addToListVC.view.backgroundColor = UIColor.black.withAlphaComponent(0.5) // 반투명한 검은색
-        present(addToListVC, animated: true, completion: nil)
+        let VC = SearchViewController()
+        VC.modalPresentationStyle = .overCurrentContext
+        VC.view.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+        present(VC, animated: true, completion: nil)
         
     }
     
@@ -276,7 +276,6 @@ extension WeatherListViewController: UISearchBarDelegate
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) 
     {
-        // SearchBar의 텍스트를 지우고, 키보드를 닫음
         searchBar.text = ""
         searchBar.resignFirstResponder()
         searchBar.setShowsCancelButton(false, animated: true)
@@ -318,9 +317,10 @@ extension WeatherListViewController: UITableViewDataSource, UITableViewDelegate
 //                self.settingButton.frame.origin = CGPoint(x: 350, y: -100)
 //                
 //            }
-            let addToListVC = MainViewController()
-            addToListVC.modalPresentationStyle = .fullScreen
-            present(addToListVC, animated: true, completion: nil)
+        let VC = MainViewController()
+        VC.modalPresentationStyle = .fullScreen
+        settingButton.isHidden = false
+        weatherLabel.isHidden = false
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
