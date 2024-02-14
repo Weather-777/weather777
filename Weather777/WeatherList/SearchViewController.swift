@@ -11,12 +11,13 @@ import MapKit
 
 class SearchViewController: UIViewController
 {
-    var weatherListVC = WeatherListViewController()
-    var addToListVC = AddToListViewController()
+    let addToListVC = AddToListViewController()
     
     
     var searchCompleter = MKLocalSearchCompleter()
     var searchResults = [MKLocalSearchCompletion]()
+    
+    // 위도, 경도 값을 통해 해당하는 지역의 표시할 날씨 데이터 처리
     
     lazy var locationSearchBar: UISearchBar =
     {
@@ -171,10 +172,7 @@ extension SearchViewController: UISearchBarDelegate
         searchBar.text = ""
         searchBar.resignFirstResponder()
         searchBar.setShowsCancelButton(false, animated: true)
-        dismiss(animated: true) 
-        {
-            self.weatherListVC.locationSearchBar.setShowsCancelButton(false, animated: true)
-        }
+        dismiss(animated: true, completion: nil)
     }
     
 }

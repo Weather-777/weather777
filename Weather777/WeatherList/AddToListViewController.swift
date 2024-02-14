@@ -13,7 +13,8 @@ import SwiftUI
 class AddToListViewController: UIViewController
 {
     var location: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 37.5670135, longitude: 126.9783740)
-    var index = "데이터"
+    
+    // 위도, 경도 값을 통해 해당하는 지역의 표시할 날씨 데이터 처리
     
     lazy var cancelButton: UIButton =
     {
@@ -63,14 +64,6 @@ class AddToListViewController: UIViewController
         
     }
     
-    override func viewDidDisappear(_ animated: Bool)
-    {
-        NotificationCenter.default.post(
-            name: Notification.Name("sendData"),
-            object: location
-        )
-    }
-    
 // MARK: - 레이아웃 지정
     func addSubView()
     {
@@ -113,6 +106,11 @@ class AddToListViewController: UIViewController
     @objc func addLocation()
     {
         dismiss(animated: true, completion: nil)
+        NotificationCenter.default.post(
+            name: Notification.Name("sendData"),
+            object: location
+        )
+        
     }
     
 }

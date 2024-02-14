@@ -59,6 +59,8 @@ class WeatherListViewController: UIViewController
     
     var data: [CLLocationCoordinate2D] = []
     
+    // 위도, 경도 값을 통해 해당하는 지역의 표시할 날씨 데이터 처리
+    
 // MARK: - UI 구성
     let weatherLabel: UILabel =
     {
