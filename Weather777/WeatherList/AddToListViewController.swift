@@ -42,6 +42,18 @@ class AddToListViewController: UIViewController
         return button
     }()
     
+    lazy var printButton: UIButton =
+    {
+        let button = UIButton()
+        button.setTitle("출력", for: .normal)
+        button.setTitleColor(.white, for: .normal)
+        button.addTarget(self, action: #selector(printInfo), for: .touchUpInside)
+        
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        return button
+    }()
+    
     override func viewDidLoad()
     {
         super.viewDidLoad()
@@ -52,8 +64,7 @@ class AddToListViewController: UIViewController
         addSubView()
         setLayout()
         
-        print(location)
-        print(aaa)
+        
     }
     
     
@@ -61,6 +72,7 @@ class AddToListViewController: UIViewController
     {
         view.addSubview(cancelButton)
         view.addSubview(addButton)
+        view.addSubview(printButton)
 
     }
     
@@ -76,8 +88,20 @@ class AddToListViewController: UIViewController
             addButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
             addButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 20),
             addButton.widthAnchor.constraint(equalToConstant: 40),
-            addButton.heightAnchor.constraint(equalToConstant: 30)
+            addButton.heightAnchor.constraint(equalToConstant: 30),
+            
+            printButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            printButton.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            printButton.widthAnchor.constraint(equalToConstant: 40),
+            printButton.heightAnchor.constraint(equalToConstant: 30)
+        
         ])
+    }
+    
+    @objc func printInfo()
+    {
+        print(location)
+        print(aaa)
     }
     
     @objc func closeView()

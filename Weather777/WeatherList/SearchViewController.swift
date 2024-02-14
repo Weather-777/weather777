@@ -134,7 +134,6 @@ extension SearchViewController: UISearchBarDelegate
         searchBar.setShowsCancelButton(false, animated: true)
         dismiss(animated: true) {
             self.weatherListVC.locationSearchBar.setShowsCancelButton(false, animated: true)
-            self.weatherListVC.showWeatherLabelAndSettingButton()
         }
 //        settingButton.isHidden = false
 //        weatherLabel.isHidden = false
