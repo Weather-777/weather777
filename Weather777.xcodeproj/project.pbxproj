@@ -36,6 +36,7 @@
 		C8AD18162B7CFFC40010688E /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = C8AD18182B7CFFC40010688E /* Localizable.strings */; };
 		CC1C99152B7BA9FE00ED4BC9 /* CustomAnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC1C99142B7BA9FE00ED4BC9 /* CustomAnnotationView.swift */; };
 		CC1C99172B7BAA0700ED4BC9 /* InfoModalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC1C99162B7BAA0700ED4BC9 /* InfoModalViewController.swift */; };
+		DA1B43F32B7C59AC00132454 /* WeatherCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA1B43F22B7C59AC00132454 /* WeatherCollectionViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -68,6 +69,7 @@
 		C8AD181A2B7D005E0010688E /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/Localizable.strings; sourceTree = "<group>"; };
 		CC1C99142B7BA9FE00ED4BC9 /* CustomAnnotationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomAnnotationView.swift; sourceTree = "<group>"; };
 		CC1C99162B7BAA0700ED4BC9 /* InfoModalViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InfoModalViewController.swift; sourceTree = "<group>"; };
+		DA1B43F22B7C59AC00132454 /* WeatherCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherCollectionViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -149,6 +151,7 @@
 			isa = PBXGroup;
 			children = (
 				C87623812B71239600748961 /* MainViewController.swift */,
+				DA1B43F22B7C59AC00132454 /* WeatherCollectionViewCell.swift */,
 				4E46B42C2B7246E8005FF8C4 /* CleanSky.gif */,
 			);
 			path = Main;
@@ -288,6 +291,7 @@
 				C850FADF2B7B5B240034C70B /* Double+Extensions.swift in Sources */,
 				CC1C99152B7BA9FE00ED4BC9 /* CustomAnnotationView.swift in Sources */,
 				C850FADD2B7AFE9C0034C70B /* URL+Extensions.swift in Sources */,
+				DA1B43F32B7C59AC00132454 /* WeatherCollectionViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
