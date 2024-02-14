@@ -8,10 +8,12 @@
 import UIKit
 import MapKit
 
+
 class SearchViewController: UIViewController
 {
-    let weatherListVC = WeatherListViewController()
-    let addToListVC = AddToListViewController()
+    var weatherListVC = WeatherListViewController()
+    var addToListVC = AddToListViewController()
+    
     
     var searchCompleter = MKLocalSearchCompleter()
     var searchResults = [MKLocalSearchCompletion]()
@@ -44,12 +46,14 @@ class SearchViewController: UIViewController
         return tableView
     }()
     
+// MARK: - Life Cycle
     override func viewDidLoad()
     {
         super.viewDidLoad()
-
+        
         self.view.backgroundColor = .black
         
+        registerObserver()
         addSubView()
         setLayout()
         
@@ -66,7 +70,15 @@ class SearchViewController: UIViewController
 
     }
     
-    // MARK: - 레이아웃 지정
+    override func viewDidDisappear(_ animated: Bool) 
+    {
+        NotificationCenter.default.post(
+            name: Notification.Name("dismissView"),
+            object: self.locationSearchBar.showsCancelButton = false
+        )
+    }
+    
+// MARK: - 레이아웃 지정
         func addSubView()
         {
             view.addSubview(locationSearchBar)
@@ -77,7 +89,7 @@ class SearchViewController: UIViewController
         {
             NSLayoutConstraint.activate([
                 locationSearchBar.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-                locationSearchBar.topAnchor.constraint(equalTo: view.topAnchor, constant: 60),
+                locationSearchBar.topAnchor.constraint(equalTo: view.topAnchor, constant: 0),
                 locationSearchBar.widthAnchor.constraint(equalToConstant: 384),
                 locationSearchBar.heightAnchor.constraint(equalToConstant: 30),
                 
@@ -87,8 +99,35 @@ class SearchViewController: UIViewController
                 searchResultTableView.heightAnchor.constraint(equalToConstant: 600)
             ])
         }
-}
+    
+// MARK: - Notification
+    func registerObserver()
+    {
+       NotificationCenter.default.addObserver(
+         self,
+         selector: #selector(sendData),
+         name: NSNotification.Name("sendData"),
+         object: nil
+       )
+        
+     }
 
+    @objc func sendData(notification: NSNotification)
+    {
+        dismiss(animated: true, completion: nil)
+    }
+    
+    @objc func dismissView(notification: NSNotification)
+    {
+        dismiss(animated: true)
+        {
+            NotificationCenter.default.post(
+                name: Notification.Name("dismissView"),
+                object: self.locationSearchBar.showsCancelButton = false
+            )
+        }
+    }
+}
 
 // MARK: - SearchBar extension
 extension SearchViewController: UISearchBarDelegate
@@ -132,13 +171,11 @@ extension SearchViewController: UISearchBarDelegate
         searchBar.text = ""
         searchBar.resignFirstResponder()
         searchBar.setShowsCancelButton(false, animated: true)
-        dismiss(animated: true) {
+        dismiss(animated: true) 
+        {
             self.weatherListVC.locationSearchBar.setShowsCancelButton(false, animated: true)
         }
-//        settingButton.isHidden = false
-//        weatherLabel.isHidden = false
     }
-    
     
 }
 
@@ -156,7 +193,6 @@ extension SearchViewController: MKLocalSearchCompleterDelegate
         print(error.localizedDescription)
     }
 }
-
 
 // MARK: - TableView extension
 extension SearchViewController: UITableViewDataSource, UITableViewDelegate
@@ -176,7 +212,10 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate
         return cell
     }
     
+// MARK: - 셀이 터치되었을 경우
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        let addToListVC = AddToListViewController()
         var location: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 37.5670135, longitude: 126.9783740)
 
         let selectedResult = searchResults[indexPath.row]
@@ -191,20 +230,11 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate
             location.longitude = placemark.coordinate.longitude
 
             // 이 시점에서 addToListVC를 present
-            self.addToListVC.location = location
-            self.addToListVC.aaa = 11
-            self.addToListVC.modalPresentationStyle = .pageSheet
+            addToListVC.location = location
+            addToListVC.modalPresentationStyle = .pageSheet
             present(addToListVC, animated: true, completion: nil)
         }
     }
-
-    func presentAddToListVC(with location: CLLocationCoordinate2D) {
-        addToListVC.location = location
-        addToListVC.aaa = 11
-        addToListVC.modalPresentationStyle = .pageSheet
-        present(addToListVC, animated: true, completion: nil)
-    }
-
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
     {

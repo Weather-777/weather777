@@ -32,12 +32,6 @@ class WeatherListTableViewCell: UITableViewCell
 
         contentView.frame = contentView.frame.inset(by: UIEdgeInsets(top: 0, left: 0, bottom: 10, right: 0))
     }
-
-    override func setSelected(_ selected: Bool, animated: Bool) 
-    {
-        
-    }
-    
 }
 
 

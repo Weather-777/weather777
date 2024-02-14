@@ -9,13 +9,10 @@ import UIKit
 import MapKit
 import SwiftUI
 
-class AddToListViewController: UIViewController 
-{
 
-    let weatherListVC = WeatherListViewController()
-    
+class AddToListViewController: UIViewController
+{
     var location: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 37.5670135, longitude: 126.9783740)
-    var aaa = 0
     var index = "데이터"
     
     lazy var cancelButton: UIButton =
@@ -54,31 +51,36 @@ class AddToListViewController: UIViewController
         return button
     }()
     
+// MARK: - Life Cycle
     override func viewDidLoad()
     {
         super.viewDidLoad()
-        
         
         self.view.backgroundColor = .black
         
         addSubView()
         setLayout()
         
-        
     }
     
+    override func viewDidDisappear(_ animated: Bool)
+    {
+        NotificationCenter.default.post(
+            name: Notification.Name("sendData"),
+            object: location
+        )
+    }
     
+// MARK: - 레이아웃 지정
     func addSubView()
     {
         view.addSubview(cancelButton)
         view.addSubview(addButton)
         view.addSubview(printButton)
-
     }
-    
+
     func setLayout()
     {
-        
         NSLayoutConstraint.activate([
             cancelButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
             cancelButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 20),
@@ -94,14 +96,13 @@ class AddToListViewController: UIViewController
             printButton.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             printButton.widthAnchor.constraint(equalToConstant: 40),
             printButton.heightAnchor.constraint(equalToConstant: 30)
-        
         ])
     }
-    
+        
+// MARK: - 버튼 동작
     @objc func printInfo()
     {
         print(location)
-        print(aaa)
     }
     
     @objc func closeView()
@@ -111,40 +112,7 @@ class AddToListViewController: UIViewController
     
     @objc func addLocation()
     {
-        weatherListVC.data.append(index)
-        weatherListVC.weatherListTableView.reloadData()
-        print("추가 \(index)")
+        dismiss(animated: true, completion: nil)
     }
     
 }
-
-
-//struct PreView: PreviewProvider
-//{
-//    static var previews: some View
-//    {
-//        AddToListViewController().toPreview()
-//    }
-//}
-//
-//
-//#if DEBUG
-//extension UIViewController {
-//    private struct Preview: UIViewControllerRepresentable
-//    {
-//        let viewController: UIViewController
-//
-//        func makeUIViewController(context: Context) -> UIViewController
-//        {
-//            return viewController
-//        }
-//
-//        func updateUIViewController(_ uiViewController: UIViewController, context: Context) { }
-//    }
-//
-//    func toPreview() -> some View
-//    {
-//        Preview(viewController: self)
-//    }
-//}
-//#endif

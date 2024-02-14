@@ -45,7 +45,8 @@ class WeatherListViewController: UIViewController
 {
     var weatherInformation: [Any] = []
     
-    var location = 0
+    var location: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 37.5670135, longitude: 126.978374)
+    var city = "대한민국"
     var time = "17:00"
     var weather = "맑음"
     var temperature = 7
@@ -56,8 +57,9 @@ class WeatherListViewController: UIViewController
     var checkdCelsiusAction: UIMenuElement.State = .on
     var checkedFahrenheitAction: UIMenuElement.State = .off
     
-    var data: [String] = []
+    var data: [CLLocationCoordinate2D] = []
     
+// MARK: - UI 구성
     let weatherLabel: UILabel =
     {
         let label = UILabel()
@@ -140,10 +142,11 @@ class WeatherListViewController: UIViewController
     {
         super.viewDidLoad()
         self.view.backgroundColor = .black
-            
+        
+        registerObserver()
         addSubView()
         setLayout()
-            
+        
         locationSearchBar.delegate = self
         
         weatherListTableView.dataSource = self
@@ -151,9 +154,81 @@ class WeatherListViewController: UIViewController
         
         let weatherListnib = UINib(nibName: "WeatherListTableViewCell", bundle: nil)
         weatherListTableView.register(weatherListnib, forCellReuseIdentifier: "WeatherListTableViewCell")
-
         weatherListTableView.separatorStyle = .singleLine
     }
+    
+// MARK: - 레이아웃 지정
+        func addSubView()
+        {
+            view.addSubview(weatherLabel)
+            view.addSubview(settingButton)
+            view.addSubview(locationSearchBar)
+            view.addSubview(weatherListTableView)
+        }
+        
+        func setLayout()
+        {
+            NSLayoutConstraint.activate([
+                weatherLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+                weatherLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 80),
+            
+            
+                settingButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
+                settingButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 60),
+                settingButton.widthAnchor.constraint(equalToConstant: 30),
+                settingButton.heightAnchor.constraint(equalToConstant: 30),
+         
+            
+                locationSearchBar.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+                locationSearchBar.topAnchor.constraint(equalTo: weatherLabel.bottomAnchor, constant: 20),
+                locationSearchBar.widthAnchor.constraint(equalToConstant: 384),
+                locationSearchBar.heightAnchor.constraint(equalToConstant: 30),
+         
+            
+                weatherListTableView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+                weatherListTableView.topAnchor.constraint(equalTo: locationSearchBar.bottomAnchor, constant: 15),
+                weatherListTableView.widthAnchor.constraint(equalToConstant: 370),
+                weatherListTableView.heightAnchor.constraint(equalToConstant: 600)
+            ])
+        }
+    
+// MARK: - Notification
+    func registerObserver() 
+    {
+       NotificationCenter.default.addObserver(
+         self,
+         selector: #selector(appendData),
+         name: NSNotification.Name("sendData"),
+         object: nil
+       )
+        
+        NotificationCenter.default.addObserver(
+          self,
+          selector: #selector(dismissView),
+          name: NSNotification.Name("dismissView"),
+          object: nil
+        )
+     }
+    
+    @objc func appendData(notification: NSNotification)
+    {
+        data.append(notification.object as! CLLocationCoordinate2D)
+        weatherListTableView.reloadData()
+        UIView.animate(withDuration: 0)
+        {
+            self.view.frame.origin.y = 0
+        }
+        self.locationSearchBar.isHidden = false
+      }
+    
+    @objc func dismissView(notification: NSNotification)
+    {
+        UIView.animate(withDuration: 0)
+        {
+            self.view.frame.origin.y = 0
+            self.locationSearchBar.isHidden = false
+        }
+      }
     
 // MARK: - 온도 단위 변환 함수
     func updateTemperature()
@@ -208,43 +283,6 @@ class WeatherListViewController: UIViewController
         
         weatherListTableView.reloadData()
     }
-    
-// MARK: - 레이아웃 지정
-    func addSubView()
-    {
-        view.addSubview(weatherLabel)
-        view.addSubview(settingButton)
-        view.addSubview(locationSearchBar)
-        view.addSubview(weatherListTableView)
-    }
-    
-    func setLayout()
-    {
-        
-        NSLayoutConstraint.activate([
-            weatherLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            weatherLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 80),
-        
-        
-            settingButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
-            settingButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 60),
-            settingButton.widthAnchor.constraint(equalToConstant: 30),
-            settingButton.heightAnchor.constraint(equalToConstant: 30),
-     
-        
-            locationSearchBar.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            locationSearchBar.topAnchor.constraint(equalTo: weatherLabel.bottomAnchor, constant: 20),
-            locationSearchBar.widthAnchor.constraint(equalToConstant: 384),
-            locationSearchBar.heightAnchor.constraint(equalToConstant: 30),
-     
-        
-            weatherListTableView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            weatherListTableView.topAnchor.constraint(equalTo: locationSearchBar.bottomAnchor, constant: 15),
-            weatherListTableView.widthAnchor.constraint(equalToConstant: 370),
-            weatherListTableView.heightAnchor.constraint(equalToConstant: 600)
-        ])
-    }
-    
 }
 
 // MARK: - SearchBar extension
@@ -257,12 +295,15 @@ extension WeatherListViewController: UISearchBarDelegate
     
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar)
     {
-        searchBar.setShowsCancelButton(true, animated: true)
-        settingButton.isHidden = true
-        weatherLabel.isHidden = true
+        UIView.animate(withDuration: 0.2)
+        {
+            self.locationSearchBar.isHidden = true
+            self.view.frame.origin.y = -130
+        }
         
         let VC = SearchViewController()
-        VC.modalPresentationStyle = .overCurrentContext
+        
+        VC.modalPresentationStyle = .automatic
         VC.view.backgroundColor = UIColor.black.withAlphaComponent(0.5)
         present(VC, animated: true, completion: nil)
         
@@ -270,7 +311,6 @@ extension WeatherListViewController: UISearchBarDelegate
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?)
     {
-        locationSearchBar.setShowsCancelButton(false, animated: true)
         self.view.endEditing(true)
     }
     
@@ -278,7 +318,6 @@ extension WeatherListViewController: UISearchBarDelegate
     {
         searchBar.text = ""
         searchBar.resignFirstResponder()
-        searchBar.setShowsCancelButton(false, animated: true)
         settingButton.isHidden = false
         weatherLabel.isHidden = false
     }
@@ -289,42 +328,34 @@ extension WeatherListViewController: UITableViewDataSource, UITableViewDelegate
 {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int 
     {
-            return data.count
+        return data.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell 
     {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "WeatherListTableViewCell", for: indexPath) as! WeatherListTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "WeatherListTableViewCell", for: indexPath) as! WeatherListTableViewCell
             
-            cell.backgroundColor = .clear
-            cell.backgroundImage.image = UIImage(named: "weatherListCellBackground")
-            cell.locationLabel.text = String(location)
-            cell.timeOrCityLabel.text = time
-            cell.weatherLabel.text = weather
-            cell.temperatureLabel.text = "\(temperature)°\(temperatureUnits)"
-            cell.highTemperatureLabel.text = "최고\(highTemperature)°\(temperatureUnits)"
-            cell.lowTemperatureLabel.text = "최저 \(lowTemperature)°\(temperatureUnits)"
+        cell.backgroundColor = .clear
+        cell.backgroundImage.image = UIImage(named: "weatherListCellBackground")
+        cell.locationLabel.text = indexPath.row == 0 ?  "나의 위치" : "\(data[indexPath.row].latitude), \(data[indexPath.row].longitude)"
+        cell.timeOrCityLabel.text = indexPath.row == 0 ? city : time
+        cell.weatherLabel.text = weather
+        cell.temperatureLabel.text = "\(temperature)°\(temperatureUnits)"
+        cell.highTemperatureLabel.text = "최고\(highTemperature)°\(temperatureUnits)"
+        cell.lowTemperatureLabel.text = "최저 \(lowTemperature)°\(temperatureUnits)"
             
-            return cell
+        return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) 
     {
-//            UIView.animate(withDuration: 0.5)
-//            {
-//                // label의 frame을 새로운 위치로 이동시킴
-//                self.weatherLabel.frame.origin = CGPoint(x: 20,y: -100)
-//                self.settingButton.frame.origin = CGPoint(x: 350, y: -100)
-//                
-//            }
         let VC = MainViewController()
         VC.modalPresentationStyle = .fullScreen
-        settingButton.isHidden = false
-        weatherLabel.isHidden = false
+        present(VC, animated: true, completion: nil)
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
     {
-            return 120
+        return 120
     }
 }
