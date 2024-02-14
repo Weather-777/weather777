@@ -31,8 +31,9 @@ extension URL {
     
     //5일치 3시간 단위 날씨 예보 API call
     //https://openweathermap.org/forecast5
+//api.openweathermap.org/data/2.5/forecast?lat=37.565534&lon=126.977895&appid=3a33f61058f414d02d09e88bfa83117c&lang=kr
     static func urlForForecastForLocation(_ currentLocation: CLLocationCoordinate2D, apiKey: String) -> URL? {
-        guard let url = URL(string: "https://api.openweathermap.org/data/2.5/forecast?lat=\(currentLocation.latitude)&lon=\(currentLocation.longitude)&appid=\(apiKey)") else {
+        guard let url = URL(string: "https://api.openweathermap.org/data/2.5/forecast?lat=\(currentLocation.latitude)&lon=\(currentLocation.longitude)&appid=\(apiKey)&lang=kr") else {
             return nil
         }
         return url
