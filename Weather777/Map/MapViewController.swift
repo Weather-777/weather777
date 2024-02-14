@@ -123,6 +123,9 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, MKMapViewD
         
         return button
     }()
+    
+    
+    
 
     //LocationManager 호출
     var locationManager = LocationManager.shared
@@ -257,24 +260,15 @@ extension MapViewController {
     // 사용자 정의 어노테이션 추가
     func createAnnotaion(locations: [(title: String, coordinate: CLLocationCoordinate2D)]) {
         for searchData in locations {
-            var forecastData: [(time: String, weatherIcon: String, temperature: Double, wind: String, humidity: Int, tempMin: Double, tempMax: Double, feelsLike: Double, rainfall: Double)] = []
             let title = searchData.title
             let coordinate = searchData.coordinate
-            weatherManager.getForecastWeather(latitude: searchData.coordinate.latitude, longitude: searchData.coordinate.longitude) { result in
-                switch result {
-                case .success(let data):
-                    forecastData = data
-                    forecastData.first!.temperature
-                case .failure(let error):
-                    print("error: \(error)")
-                    
-                }}
+            let temperature = "2°C"
             
             addCustomPin(title: title, temperature: temperature, coordinate: coordinate)
         }
     }
     //맵에 핀 생성
-    func addCustomPin(title: String, temperature: Double, coordinate: CLLocationCoordinate2D) {
+    func addCustomPin(title: String,temperature: String, coordinate: CLLocationCoordinate2D) {
         let pin = CustomAnnotation(title: title, temperature: temperature, coordinate: coordinate)
         mapView.addAnnotation(pin)
     }
