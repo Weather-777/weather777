@@ -11,6 +11,7 @@ import MapKit
 class SearchViewController: UIViewController
 {
     weak var weatherListVC: WeatherListViewController?
+    weak var addToListVC: AddToListViewController?
 
     var searchCompleter = MKLocalSearchCompleter()
     var searchResults = [MKLocalSearchCompletion]()
@@ -47,6 +48,7 @@ class SearchViewController: UIViewController
     {
         super.viewDidLoad()
         weatherListVC = parent as? WeatherListViewController
+        addToListVC = parent as? AddToListViewController
         self.view.backgroundColor = .black
         
         addSubView()
@@ -98,6 +100,12 @@ extension SearchViewController: UISearchBarDelegate
         {
             searchResults.removeAll()
             searchResultTableView.reloadData()
+            searchResultTableView.isHidden = true
+        }
+        
+        else
+        {
+            searchResultTableView.isHidden = false
         }
         searchCompleter.queryFragment = searchText
     }
@@ -116,6 +124,7 @@ extension SearchViewController: UISearchBarDelegate
     {
         locationSearchBar.setShowsCancelButton(false, animated: true)
         self.view.endEditing(true)
+        dismiss(animated: true, completion: nil)
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar)
@@ -128,6 +137,8 @@ extension SearchViewController: UISearchBarDelegate
 //        settingButton.isHidden = false
 //        weatherLabel.isHidden = false
     }
+    
+    
 }
 
 // MARK: - MKLocalSearchCompleterDelegate
@@ -166,6 +177,7 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
+        addToListVC?.location = CLLocationCoordinate2D(searchResults[indexPath.row])
         let addToListVC = AddToListViewController()
         addToListVC.modalPresentationStyle = .pageSheet
         present(addToListVC, animated: true, completion: nil)

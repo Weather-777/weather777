@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import MapKit
 import SwiftUI
 
 class AddToListViewController: UIViewController 
@@ -13,7 +14,7 @@ class AddToListViewController: UIViewController
 
     weak var weatherListVC: WeatherListViewController?
     
-    var location = 0
+    var location: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 37.5670135, longitude: 126.9783740)
     var index = "데이터"
     
     lazy var cancelButton: UIButton =
@@ -46,7 +47,7 @@ class AddToListViewController: UIViewController
         
         weatherListVC = parent as? WeatherListViewController
         
-        self.view.backgroundColor = .white
+        self.view.backgroundColor = .black
         
         addSubView()
         setLayout()
@@ -65,12 +66,12 @@ class AddToListViewController: UIViewController
         
         NSLayoutConstraint.activate([
             cancelButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
-            cancelButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 80),
+            cancelButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 20),
             cancelButton.widthAnchor.constraint(equalToConstant: 40),
             cancelButton.heightAnchor.constraint(equalToConstant: 20),
             
             addButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
-            addButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 80),
+            addButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 20),
             addButton.widthAnchor.constraint(equalToConstant: 40),
             addButton.heightAnchor.constraint(equalToConstant: 30)
         ])
