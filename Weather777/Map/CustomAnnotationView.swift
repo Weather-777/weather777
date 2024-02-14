@@ -17,13 +17,13 @@ class CustomAnnotation: NSObject, MKAnnotation {
     //지역명
     var title: String?
     //지역 현재 온도
-    var temperature: String?
+    var temperature: Double?
     //위경도
     @objc dynamic var coordinate: CLLocationCoordinate2D
     
     init(
         title: String?,
-        temperature: String?,
+        temperature: Double?,
         coordinate: CLLocationCoordinate2D
     ){
         self.title = title
@@ -66,7 +66,7 @@ class CustomAnnotationView: MKAnnotationView {
         let view = UIStackView(arrangedSubviews: [temperatureLabel, regionLabel])
         view.spacing = 5
         view.axis = .vertical
-        view.backgroundColor = .lightGray
+        view.backgroundColor = .white
         view.frame = CGRect(x: 0, y: 0, width: 50, height: 50)
         view.layer.cornerRadius = view.frame.height / 2
         
@@ -112,7 +112,7 @@ class CustomAnnotationView: MKAnnotationView {
         
         guard let annotation = annotation as? CustomAnnotation else { return }
         
-        temperatureLabel.text = annotation.temperature
+        temperatureLabel.text = "\(String(describing: annotation.temperature))"
         regionLabel.text = annotation.title
         
         setNeedsLayout()
