@@ -25,6 +25,8 @@ class WeatherListViewController: UIViewController
 {
     let cityListManager = CityListManager.shared
     
+    var forecastData: [(cityname:String, time: String, weatherIcon: String, weatherdescription: String, temperature: Double, wind: String, humidity: Int, tempMin: Double, tempMax: Double, feelsLike: Double, rainfall: Double)] = []
+    
     lazy var printButton: UIButton =
     {
         let button = UIButton()
@@ -113,16 +115,18 @@ class WeatherListViewController: UIViewController
                         selectedData = Array(data[startIndex..<endIndex])
                     }
                     
-                    for firstSelectData in selectedData {
-                        let cityName = NSLocalizedString(firstSelectData.cityname, comment: "")
-                        let time = firstSelectData.time
-                        let weatherDescription = firstSelectData.weatherdescription
-                        let temperature = firstSelectData.temperature
-                        let tempMax = firstSelectData.tempMax
-                        let tempMin = firstSelectData.tempMin
+                    self?.forecastData = selectedData
+                    
+                
+                    let cityName = NSLocalizedString(self?.forecastData[0].cityname ?? "", comment: "")
+                    let time = self?.forecastData[0].time
+                    let weatherDescription = self?.forecastData[0].weatherdescription
+                    let temperature = self?.forecastData[0].temperature
+                    let tempMax = self?.forecastData[0].tempMax
+                    let tempMin = self?.forecastData[0].tempMin
                         
-                        self?.weatherDataList.append(WeatherInfo(cityName: cityName, time: time, weatherDescription: weatherDescription, temperature: temperature, tempMax: tempMax, tempMin: tempMin))
-                    }
+                    self?.weatherDataList.append(WeatherInfo(cityName: cityName , time: time ?? "", weatherDescription: weatherDescription ?? "", temperature: temperature ?? 0, tempMax: tempMax ?? 0, tempMin: tempMin ?? 0))
+                    
                     
                     // 테이블 뷰를 새로고침하여 데이터를 업데이트
                     self?.weatherListTableView.reloadData()

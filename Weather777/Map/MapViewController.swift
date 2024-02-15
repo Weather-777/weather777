@@ -23,13 +23,11 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, MKMapViewD
     //userdefault 저장된 값 호출
     private var coordList: [Coord] = CityListManager.shared.readAll()
     
-//    //처음 좌표를 넣어서 뽑아오는 데이터 배열
-//    var forecastData: [(cityname: String, time: String, weatherIcon: String, weatherdescription: String, temperature: Double, wind: String, humidity: Int, tempMin: Double, tempMax: Double, feelsLike: Double, rainfall: Double)] = []
-    
     //MapView에서만 사용될 데이터 배열
     var configMapInfo: [MapInfo] = []
     
-    
+    var forecastData: [(cityname:String, time: String, weatherIcon: String, weatherdescription: String, temperature: Double, wind: String, humidity: Int, tempMin: Double, tempMax: Double, feelsLike: Double, rainfall: Double)] = []
+        
     //임의로 지역 배열- 지역명과 좌표만 저장되어 있는 형태
     var searchweatherData: [(title: String, coordinate: CLLocationCoordinate2D)] = [("1", CLLocationCoordinate2D(latitude: 37.2719952, longitude: 127.4348221)), ("2", CLLocationCoordinate2D(latitude: 37.58218213889754, longitude: 127.0594372509795))]
     
@@ -151,8 +149,6 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, MKMapViewD
         addView()
         addViewConstraints()
         setInfoView()
-        convertCoord()
-        createAnnotaion(locations: coordList, Info: configMapInfo)
         
     }
     
@@ -243,20 +239,39 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, MKMapViewD
     
     //저장소의 좌표값에 따라 값 가져온 배열 만들기
     private func convertCoord() {
-        
-        var forecastData: [(cityname: String, time: String, weatherIcon: String, weatherdescription: String, temperature: Double, wind: String, humidity: Int, tempMin: Double, tempMax: Double, feelsLike: Double, rainfall: Double)] = []
-        
+
         for data in coordList {
-            WeatherManager.shared.getForecastWeather(latitude: data.lat, longitude: data.lon) { result in
+            WeatherManager.shared.getForecastWeather(latitude: data.lat, longitude: data.lon) { [weak self] result in
                 switch result {
                 case .success(let data):
+                    let now = Date()
+                    var selectedData = [(cityname: String, time: String, weatherIcon: String, weatherdescription: String, temperature: Double, wind: String, humidity: Int, tempMin: Double, tempMax: Double, feelsLike: Double, rainfall: Double)]()
                     
-                    forecastData = data
+                    // DateFormatter 설정
+                    let dateFormatter = DateFormatter()
+                    dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
                     
-                    for forecast in forecastData {
-                        let appenddata = MapInfo(cityname: forecast.cityname, temperature: forecast.temperature, wind: forecast.wind)
-                        self.configMapInfo.append(appenddata)
+                    // 가장 가까운 과거 시간 찾기
+                    var closestPastIndex = -1
+                    for (index, forecast) in data.enumerated() {
+                        if let date = dateFormatter.date(from: forecast.time), date <= now {
+                            closestPastIndex = index
+                        } else {
+                            break // 이미 과거 시간 중 가장 가까운 시간을 찾았으므로 반복 중단
+                        }
                     }
+                    
+                    // 가장 가까운 과거 시간부터 8개 데이터 선택
+                    if closestPastIndex != -1 {
+                        let startIndex = closestPastIndex
+                        let endIndex = min(startIndex + 8, data.count)
+                        selectedData = Array(data[startIndex..<endIndex])
+                    }
+                    
+                    self?.forecastData = selectedData
+                    
+                    let appenddata = MapInfo(cityname: self?.forecastData[0].cityname ?? "", temperature: self?.forecastData[0].temperature ?? 0, wind: self?.forecastData[0].wind ?? "")
+                    self?.configMapInfo.append(appenddata)
   
                 case .failure(let error):
                     print("Error: \(error)")
@@ -288,14 +303,28 @@ extension MapViewController {
 //MARK: - AnnotationDelegate
 extension MapViewController {
     // 사용자 정의 어노테이션 추가
-    func createAnnotaion(locations: [Coord], Info: [MapInfo]) {
-        for searchData in locations {
-            let title = Info[(searchData.id ?? 0) - 1].cityname
-            let coordinate = CLLocationCoordinate2D(latitude: searchData.lat, longitude: searchData.lon)
-            let temperature = Info[searchData.id ?? 0].temperature
-            
-            addCustomPin(title: title, temperature: temperature, coordinate: coordinate)
-        }
+    func createAnnotaion(locations: [Coord], Info: [MapInfo]?) {
+        // Info 배열이 nil인 경우 또는 비어 있는 경우 함수 종료
+            guard let info = Info, !info.isEmpty else {
+                print(1)
+                return
+            }
+
+            for searchData in locations {
+                guard let index = searchData.id else { continue }
+                
+                // Info 배열의 인덱스 0에 해당하는 요소가 있는지 확인
+                guard info.indices.contains(0) else {
+                    print(2)
+                    continue
+                }
+                
+                let title = info[index].cityname
+                let coordinate = CLLocationCoordinate2D(latitude: searchData.lat, longitude: searchData.lon)
+                let temperature = info[index].temperature
+                
+                addCustomPin(title: title, temperature: temperature, coordinate: coordinate)
+            }
     }
     //맵에 핀 생성
     func addCustomPin(title: String,temperature: Double, coordinate: CLLocationCoordinate2D) {
