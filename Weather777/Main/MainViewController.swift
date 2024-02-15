@@ -120,6 +120,8 @@ class MainViewController: UIViewController {
     
     var currentLatitude: Double = 0
     var currentLongitude: Double = 0
+    var tempMin: Double = 0
+    var tempMax: Double = 0
     
     // LocationManager 인스턴스에 접근
     private let locationManager = LocationManager.shared
@@ -370,6 +372,8 @@ class MainViewController: UIViewController {
                     self?.humidityPercentageLabel.text = "\(self?.forecastData[0].humidity ?? 0)%"
                     self?.windSpeedLabel.text = self?.forecastData[0].wind ?? ""
                     self?.feelLikeTemperatureIndexLabel.text = String(self?.forecastData[0].feelsLike ?? 0)
+                    self?.tempMin = self?.forecastData[0].tempMin ?? 0
+                    self?.tempMax = self?.forecastData[0].tempMax ?? 0
                     self?.collectionView.reloadData()
                 }
 
@@ -421,6 +425,13 @@ class MainViewController: UIViewController {
     @objc func weatherListButtonTapped() {
         let weatherListVC = WeatherListViewController()
         weatherListVC.modalPresentationStyle = .fullScreen
+        let cityNameInKorean = NSLocalizedString(self.forecastData[0].cityname, comment: "")
+        weatherListVC.city = cityNameInKorean
+        weatherListVC.weather = self.forecastData[0].weatherdescription
+        weatherListVC.currentLatitude = self.currentLatitude
+        weatherListVC.currentLongitude = self.currentLongitude
+        weatherListVC.lowTemperature = self.tempMin
+        weatherListVC.highTemperature = self.tempMax
         present(weatherListVC, animated: true, completion: nil)
     }
 }
@@ -472,13 +483,5 @@ extension UIStackView {
         for view in views {
             self.addArrangedSubview(view)
         }
-    }
-}
-
-extension MainViewController {
-    func convertToDate(from dateString: String) -> Date? {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        return dateFormatter.date(from: dateString)
     }
 }

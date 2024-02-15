@@ -26,7 +26,7 @@ struct City: Codable {
 
 // MARK: - Coord
 struct Coord: Codable {
-    var id: Int
+    var id: Int?
     var lat, lon: Double
 }
 extension Coord {

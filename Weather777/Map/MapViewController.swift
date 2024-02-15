@@ -290,9 +290,9 @@ extension MapViewController {
     // 사용자 정의 어노테이션 추가
     func createAnnotaion(locations: [Coord], Info: [MapInfo]) {
         for searchData in locations {
-            let title = Info[(searchData.id) - 1].cityname
+            let title = Info[(searchData.id ?? 0) - 1].cityname
             let coordinate = CLLocationCoordinate2D(latitude: searchData.lat, longitude: searchData.lon)
-            let temperature = Info[searchData.id].temperature
+            let temperature = Info[searchData.id ?? 0].temperature
             
             addCustomPin(title: title, temperature: temperature, coordinate: coordinate)
         }
