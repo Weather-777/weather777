@@ -10,6 +10,7 @@ import SwiftUI
 import SnapKit
 import Then
 import Gifu
+import CoreLocation
 
 class MainViewController: UIViewController {
     
@@ -23,7 +24,6 @@ class MainViewController: UIViewController {
     }
     let currentCityNameLabel = UILabel().then {
         $0.font = UIFont(name: "Roboto-Medium", size: 35)
-        $0.text = "서울특별시"
         $0.textColor = .white
     }
     let currentWeatherIcon = UIImageView().then {
@@ -31,12 +31,10 @@ class MainViewController: UIViewController {
     }
     let currentWeatherConditionLabel = UILabel().then {
         $0.font = UIFont(name: "Roboto-Bold", size: 40)
-        $0.text = "맑음"
         $0.textColor = .white
     }
     let currentWeatherTemperatureLabel = UILabel().then {
         $0.font = UIFont(name: "Roboto-Bold", size: 60)
-        $0.text = "24"
         $0.textColor = .white
     }
     let celsiusLabel = UILabel().then {
@@ -63,7 +61,6 @@ class MainViewController: UIViewController {
     }
     let humidityPercentageLabel = UILabel().then {
         $0.font = UIFont(name: "Roboto-Regular", size: 14)
-        $0.text = "56%"
         $0.textColor = .white
     }
     let windVStackView = UIStackView().then {
@@ -81,7 +78,6 @@ class MainViewController: UIViewController {
     }
     let windSpeedLabel = UILabel().then {
         $0.font = UIFont(name: "Roboto-Regular", size: 14)
-        $0.text = "4.63km/h"
         $0.textColor = .white
     }
     let feelLikeTemperatureVStackView = UIStackView().then {
@@ -99,13 +95,11 @@ class MainViewController: UIViewController {
     }
     let feelLikeTemperatureIndexLabel = UILabel().then {
         $0.font = UIFont(name: "Roboto-Regular", size: 14)
-        $0.text = "22º"
         $0.textColor = .white
     }
     lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout()).then {
         $0.backgroundColor = UIColor(red: 50/255, green: 50/255, blue: 50/255, alpha: 0.3)
         $0.register(WeatherCollectionViewCell.self, forCellWithReuseIdentifier: "WeatherCollectionViewCell")
-        $0.delegate = self
         $0.dataSource = self
         $0.layer.cornerRadius = 16
     }
@@ -123,18 +117,71 @@ class MainViewController: UIViewController {
         $0.setImage(UIImage(named: "WeatherList"), for: .normal)
     }
     var forecastData: [(cityname:String, time: String, weatherIcon: String, weatherdescription: String, temperature: Double, wind: String, humidity: Int, tempMin: Double, tempMax: Double, feelsLike: Double, rainfall: Double)] = []
-
+    
+    var currentLatitude: Double = 0
+    var currentLongitude: Double = 0
+    
+    // LocationManager 인스턴스에 접근
+    private let locationManager = LocationManager.shared
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         updateBackgroundGIF(with: "CleanSky")
         setUpViewHierarchy()
         setUpLayout()
         fahrenheitLabel.isHidden = true
+        mapButton.addTarget(self, action: #selector(mapButtonTapped), for: .touchUpInside)
+        weatherListButton.addTarget(self, action: #selector(weatherListButtonTapped), for: .touchUpInside)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        updateForecastData()
+//        if self.currentLatitude != 0.0 && self.currentLongitude != 0.0 {
+//            updateForecastData(latitude: currentLatitude, longitude: currentLongitude)
+//        }
+        
+        // 사용자에게 위치 권한 요청
+        requestLocationAccess()
+        
+        // 위치 정보 업데이트 시 처리
+        LocationManager.shared.onLocationUpdate = { [weak self] location in
+            // 위경도 값 사용하여 UI 업데이트
+            print("Updated location: \(location.latitude), \(location.longitude)")
+            self?.currentLatitude = location.latitude
+            self?.currentLongitude = location.longitude
+            self?.updateForecastData(latitude: self?.currentLatitude ?? 0, longitude: self?.currentLongitude ?? 0)
+        }
+        
+        // 앱 최초 실행에서 위치 권한 거부시 위치 설정으로 유도
+        LocationManager.shared.onAuthorizationStatusChanged = { [weak self] status in
+            DispatchQueue.main.async {
+                switch status {
+                case .denied, .restricted:
+                    // 권한 거부 상태에 따른 UI 표시
+                    let alert = UIAlertController(title: "위치 서비스 권한 필요", message: "앱의 전체 기능을 사용하려면 위치 서비스 권한이 필요합니다. 설정에서 권한을 허용해주세요.", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "설정으로 이동", style: .default, handler: { _ in
+                        if let settingsURL = URL(string: UIApplication.openSettingsURLString) {
+                            UIApplication.shared.open(settingsURL)
+                        }
+                    }))
+                    alert.addAction(UIAlertAction(title: "취소", style: .cancel))
+                    self?.present(alert, animated: true)
+                default:
+                    break
+                }
+            }
+        }
+    }
+    
+    private func requestLocationAccess() {
+        // 권한 상태에 따라 직접 처리하지 않고, LocationManager의 기능을 활용
+        locationManager.requestLocation()
+    }
+    
+    private func showAlertForLocationServiceDisabled() {
+        let alert = UIAlertController(title: "위치 서비스 비활성화", message: "위치 서비스가 비활성화되어 있습니다. 설정에서 위치 서비스를 활성화해주세요.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "확인", style: .default))
+        present(alert, animated: true)
     }
     
     private func setUpViewHierarchy() {
@@ -278,9 +325,7 @@ class MainViewController: UIViewController {
         }
     }
     
-    func updateForecastData() {
-        let latitude = 37.4536
-        let longitude = 126.7317
+    func updateForecastData(latitude: Double, longitude: Double) {
 
         WeatherManager.shared.getForecastWeather(latitude: latitude, longitude: longitude) { [weak self] result in
             switch result {
@@ -320,6 +365,7 @@ class MainViewController: UIViewController {
                     self?.downloadWeatherIconImage(from: iconUrlString) { image in
                         self?.currentWeatherIcon.image = image
                     }
+                    self?.currentWeatherTemperatureLabel.text = String(self?.forecastData[0].temperature ?? 0)
                     self?.currentWeatherConditionLabel.text = self?.forecastData[0].weatherdescription ?? ""
                     self?.humidityPercentageLabel.text = "\(self?.forecastData[0].humidity ?? 0)%"
                     self?.windSpeedLabel.text = self?.forecastData[0].wind ?? ""
@@ -365,6 +411,18 @@ class MainViewController: UIViewController {
             }
         }.resume()
     }
+    
+    @objc func mapButtonTapped() {
+        let mapVC = MapViewController()
+        mapVC.modalPresentationStyle = .fullScreen
+        present(mapVC, animated: true, completion: nil)
+    }
+    
+    @objc func weatherListButtonTapped() {
+        let weatherListVC = WeatherListViewController()
+        weatherListVC.modalPresentationStyle = .fullScreen
+        present(weatherListVC, animated: true, completion: nil)
+    }
 }
 
 extension MainViewController: UICollectionViewDataSource {
@@ -407,10 +465,6 @@ extension MainViewController: UICollectionViewDataSource {
         
         return cell
     }
-}
-
-extension MainViewController: UICollectionViewDelegate {
-    // Add any delegate methods if needed
 }
 
 extension UIStackView {

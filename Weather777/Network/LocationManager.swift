@@ -21,6 +21,8 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     // callback 위치가 업데이트되었을 때 자동 호출
     var onLocationUpdate: ((CLLocationCoordinate2D) -> Void)?
     
+    var onAuthorizationStatusChanged: ((CLAuthorizationStatus) -> Void)?
+    
     override init() {
         super.init()
         
@@ -39,8 +41,6 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         locationManager.requestLocation()
     }
     
-    //MARK: - CLLocationManagerDelegate
-    
     //권한 상태 확인
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         switch manager.authorizationStatus {
@@ -48,8 +48,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
             //권한 허가일 경우 현재 위치 업데이트
             manager.startUpdatingLocation()
         case .denied, .restricted:
-            // alert 구현
-            print("denied")
+            onAuthorizationStatusChanged?(manager.authorizationStatus)
         case .notDetermined:
             //결정이 안되었을 경우 권한 요청
             manager.requestWhenInUseAuthorization()
