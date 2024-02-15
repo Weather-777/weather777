@@ -43,6 +43,9 @@ import SwiftUI
 
 class WeatherListViewController: UIViewController
 {
+    var currentLatitude: Double = 0
+    var currentLongitude: Double = 0
+    
     var currentLocation: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 37.5670135, longitude: 126.978374)   // 현재 위치
     var city: String = ""
     var time: String = ""
@@ -188,6 +191,13 @@ class WeatherListViewController: UIViewController
     {
         super.viewDidLoad()
         self.view.backgroundColor = .black
+        
+        print("⭐️\(self.city)")
+        print("⭐️\(self.weather)")
+        print("⭐️\(self.currentLatitude)")
+        print("⭐️\(self.currentLongitude)")
+        print("⭐️\(self.lowTemperature)")
+        print("⭐️\(self.highTemperature)")
         
         registerObserver()
         addSubView()
