@@ -372,8 +372,8 @@ class MainViewController: UIViewController {
                     self?.humidityPercentageLabel.text = "\(self?.forecastData[0].humidity ?? 0)%"
                     self?.windSpeedLabel.text = self?.forecastData[0].wind ?? ""
                     self?.feelLikeTemperatureIndexLabel.text = String(self?.forecastData[0].feelsLike ?? 0)
-                    self?.tempMin = self?.forecastData[0].tempMin
-                    self?.tempMax = self?.forecastData[0].tempMax
+                    self?.tempMin = self?.forecastData[0].tempMin ?? 0
+                    self?.tempMax = self?.forecastData[0].tempMax ?? 0
                     self?.collectionView.reloadData()
                 }
 
