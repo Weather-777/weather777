@@ -11,7 +11,7 @@ import SnapKit
 import Then
 import Gifu
 
-struct SendData
+struct SendData: Codable
 {
     var cityName: String
     var time: String
@@ -185,6 +185,17 @@ class AddToListViewController: UIViewController
     
     @objc func addLocation()
     {
+        let saveLocation = Coord(lat: location.latitude, lon: location.longitude)
+        CityListManager.shared.add(saveLocation)
+        
+        let manager = CityListManager.shared
+        let storeData = manager.readAll()
+        for coord in storeData
+        {
+            print("UserDefaults \(coord.lat), \(coord.lon)")
+        }
+        
+        
         dismiss(animated: true, completion: nil)
         NotificationCenter.default.post(
             name: Notification.Name("sendLocationData"),
