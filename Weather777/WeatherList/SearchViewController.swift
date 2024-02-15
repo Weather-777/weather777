@@ -107,7 +107,7 @@ class SearchViewController: UIViewController
        NotificationCenter.default.addObserver(
          self,
          selector: #selector(sendData),
-         name: NSNotification.Name("sendData"),
+         name: NSNotification.Name("sendWeatherData"),
          object: nil
        )
         

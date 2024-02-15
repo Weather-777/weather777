@@ -421,13 +421,13 @@ class MainViewController: UIViewController {
     @objc func weatherListButtonTapped() {
         let weatherListVC = WeatherListViewController()
         weatherListVC.modalPresentationStyle = .fullScreen
-        let cityNameInKorean = NSLocalizedString(self.forecastData[0].cityname, comment: "")
-        weatherListVC.city = cityNameInKorean
-        weatherListVC.weather = self.forecastData[0].weatherdescription
-        weatherListVC.currentLatitude = self.currentLatitude
-        weatherListVC.currentLongitude = self.currentLongitude
-        weatherListVC.lowTemperature = self.tempMin
-        weatherListVC.highTemperature = self.tempMax
+//        let cityNameInKorean = NSLocalizedString(self.forecastData[0].cityname, comment: "")
+//        weatherListVC.cityName = cityNameInKorean
+//        weatherListVC.weatherDescription = self.forecastData[0].weatherdescription
+//        weatherListVC.currentLatitude = self.currentLatitude
+//        weatherListVC.currentLongitude = self.currentLongitude
+//        weatherListVC.tempMin = self.tempMin
+//        weatherListVC.tempMax = self.tempMax
         present(weatherListVC, animated: true, completion: nil)
     }
 }

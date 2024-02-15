@@ -113,7 +113,6 @@ class AddToListViewController: UIViewController {
     }
 
     var forecastData: [(cityname:String, time: String, weatherIcon: String, weatherdescription: String, temperature: Double, wind: String, humidity: Int, tempMin: Double, tempMax: Double, feelsLike: Double, rainfall: Double)] = []
-    
     var currentLatitude: Double = 0
     var currentLongitude: Double = 0
     
@@ -227,15 +226,6 @@ class AddToListViewController: UIViewController {
             $0.leading.trailing.equalToSuperview().inset(25)
             $0.bottom.equalTo(viewOverGif.snp.bottom).offset(-30)
         }
-    }
-    
-    @objc func cancelButtonTapped() {
-        // 취소 버튼 동작 구현
-        self.dismiss(animated: true, completion: nil)
-    }
-    
-    @objc func addButtonTapped() {
-        // 추가 버튼 동작 구현
     }
     
     func setupBlurEffect() {
@@ -403,5 +393,4 @@ extension AddToListViewController: UICollectionViewDataSource {
         cell.windSpeedLabel.text = "\(windSpeedString)"
         
         return cell
-    }
 }
