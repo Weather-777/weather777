@@ -177,8 +177,8 @@
 				6C43002C2B736F36009D8A6B /* WeatherListTableViewCell.xib */,
 				6CF0284C2B7B205500791C34 /* SearchResultTableViewCell.swift */,
 				6CF0284D2B7B205500791C34 /* SearchResultTableViewCell.xib */,
-				6CF028482B74DEE100791C34 /* AddToListViewController.swift */,
 				6C57CF212B7B6C7100BEAAEE /* SearchViewController.swift */,
+				6CF028482B74DEE100791C34 /* AddToListViewController.swift */,
 			);
 			path = WeatherList;
 			sourceTree = "<group>";
@@ -472,7 +472,6 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
-				DEVELOPMENT_TEAM = 335MYJGX88;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Weather777/Info.plist;
