@@ -79,59 +79,61 @@ class WeatherListViewController: UIViewController
         print("날씨 정보 함수")
         
         WeatherManager.shared.getForecastWeather(latitude: latitude, longitude: longitude) { [weak self] result in
-            switch result {
+            switch result
+            {
             case .success(let data):
-                DispatchQueue.main.async { // 비동기 작업을 메인 스레드에서 처리하도록 함
-                    // 현재 시각
-                    let now = Date()
-                    var selectedData = [(cityname: String, time: String, weatherIcon: String, weatherdescription: String, temperature: Double, wind: String, humidity: Int, tempMin: Double, tempMax: Double, feelsLike: Double, rainfall: Double)]()
-                    
-                    // DateFormatter 설정
-                    let dateFormatter = DateFormatter()
-                    dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-                    
-                    // 가장 가까운 과거 시간 찾기
-                    var closestPastIndex = -1
-                    for (index, forecast) in data.enumerated() {
-                        if let date = dateFormatter.date(from: forecast.time), date <= now {
-                            closestPastIndex = index
-                        } else {
-                            break // 이미 과거 시간 중 가장 가까운 시간을 찾았으므로 반복 중단
-                        }
-                    }
-                    
-                    // 가장 가까운 과거 시간부터 8개 데이터 선택
-                    if closestPastIndex != -1 {
-                        let startIndex = closestPastIndex
-                        let endIndex = min(startIndex + 8, data.count)
-                        selectedData = Array(data[startIndex..<endIndex])
-                    }
-                    
-                    if let firstSelectData = selectedData.first
+                //                DispatchQueue.main.async
+                //                { // 비동기 작업을 메인 스레드에서 처리하도록 함
+                // 현재 시각
+                let now = Date()
+                var selectedData = [(cityname: String, time: String, weatherIcon: String, weatherdescription: String, temperature: Double, wind: String, humidity: Int, tempMin: Double, tempMax: Double, feelsLike: Double, rainfall: Double)]()
+                
+                // DateFormatter 설정
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+                
+                // 가장 가까운 과거 시간 찾기
+                var closestPastIndex = -1
+                for (index, forecast) in data.enumerated()
+                {
+                    if let date = dateFormatter.date(from: forecast.time), date <= now
                     {
-                        let cityName = NSLocalizedString(firstSelectData.cityname, comment: "")
-                        
-                        let calendar = Calendar.current
-                        if let date = dateFormatter.date(from: dateFormatter.dateFormat)
-                        {
-                            let calendar = Calendar.current
-                            let hour = calendar.component(.hour, from: date)
-                            let minute = calendar.component(.minute, from: date)
-                            let formattedTime = "\(hour) : \(minute)"
-                            let time = firstSelectData.time
-                            
-                            let weatherDescription = firstSelectData.weatherdescription
-                            let temperature = firstSelectData.temperature
-                            let tempMax = firstSelectData.tempMax
-                            let tempMin = firstSelectData.tempMin
-                            
-                            self?.weatherDataList.append(WeatherInfo(cityName: cityName, time: time, weatherDescription: weatherDescription, temperature: temperature, tempMax: tempMax, tempMin: tempMin))
-                        }
+                        closestPastIndex = index
                     }
-                    
-                    // 테이블 뷰를 새로고침하여 데이터를 업데이트
-                    self?.weatherListTableView.reloadData()
+                    else
+                    {
+                        break // 이미 과거 시간 중 가장 가까운 시간을 찾았으므로 반복 중단
+                    }
                 }
+                
+                // 가장 가까운 과거 시간부터 8개 데이터 선택
+                if closestPastIndex != -1 {
+                    let startIndex = closestPastIndex
+                    let endIndex = min(startIndex + 8, data.count)
+                    selectedData = Array(data[startIndex..<endIndex])
+                }
+                
+                if let firstSelectData = selectedData.first
+                {
+                    let cityName = NSLocalizedString(firstSelectData.cityname, comment: "")
+                    
+                    let calendar = Calendar.current
+                    if let date = dateFormatter.date(from: dateFormatter.dateFormat)
+                    {
+                        let calendar = Calendar.current
+                        let hour = calendar.component(.hour, from: date)
+                        let minute = calendar.component(.minute, from: date)
+                        let time = "\(hour) : \(minute)"
+                        
+                        let weatherDescription = firstSelectData.weatherdescription
+                        let temperature = firstSelectData.temperature
+                        let tempMax = firstSelectData.tempMax
+                        let tempMin = firstSelectData.tempMin
+                        
+                        self?.weatherDataList.append(WeatherInfo(cityName: cityName, time: time, weatherDescription: weatherDescription, temperature: temperature, tempMax: tempMax, tempMin: tempMin))
+                    }
+                }
+                //                }
                 
             case .failure(let error):
                 print("Error: \(error)")
