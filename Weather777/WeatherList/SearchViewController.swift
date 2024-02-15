@@ -228,7 +228,8 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate
             location.longitude = placemark.coordinate.longitude
 
             // 이 시점에서 addToListVC를 present
-            addToListVC.location = location
+            addToListVC.currentLatitude = location.latitude
+            addToListVC.currentLongitude = location.longitude
             addToListVC.modalPresentationStyle = .pageSheet
             present(addToListVC, animated: true, completion: nil)
         }
