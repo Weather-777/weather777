@@ -11,6 +11,7 @@ import Then
 import Gifu
 import CoreLocation
 
+
 class AddToListViewController: UIViewController {
     
     var gifImageView: GIFImageView?
@@ -113,6 +114,7 @@ class AddToListViewController: UIViewController {
     }
 
     var forecastData: [(cityname:String, time: String, weatherIcon: String, weatherdescription: String, temperature: Double, wind: String, humidity: Int, tempMin: Double, tempMax: Double, feelsLike: Double, rainfall: Double)] = []
+    var sendWeatherData: [WeatherInfo] = []
     var currentLatitude: Double = 0
     var currentLongitude: Double = 0
     
@@ -145,9 +147,10 @@ class AddToListViewController: UIViewController {
         dismiss(animated: true) {
             NotificationCenter.default.post(
                 name: Notification.Name("sendLocationData"),
-                object: nil
+                object: self.sendWeatherData
             )
         }
+        print(sendWeatherData)
     }
     
     @objc func cancelButtonTapped()
@@ -335,6 +338,8 @@ class AddToListViewController: UIViewController {
                     self?.windSpeedLabel.text = self?.forecastData[0].wind ?? ""
                     self?.feelLikeTemperatureIndexLabel.text = String(self?.forecastData[0].feelsLike ?? 0)
                     self?.collectionView.reloadData()
+                    
+                    self?.sendWeatherData = [WeatherInfo(cityName: cityNameInKorean, time: self?.forecastData[0].time ?? "", weatherDescription: self?.forecastData[0].weatherdescription ?? "", temperature: self?.forecastData[0].temperature ?? 0, tempMax: self?.forecastData[0].tempMax ?? 0, tempMin: self?.forecastData[0].tempMin ?? 0)]
                 }
 
                 // 선택된 데이터 로그 출력
