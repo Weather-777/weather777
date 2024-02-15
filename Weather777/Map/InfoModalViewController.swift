@@ -15,8 +15,6 @@ class InfoModalViewController: UIViewController {
     
     var type: InfoType?
     var searchweatherData: [(title: String, coordinate: CLLocationCoordinate2D)] = []
-    weak var MapVC = MapViewController()
-    
     
     //MARK: - UI Component
     var infoImage: UIImageView = {
@@ -42,7 +40,7 @@ class InfoModalViewController: UIViewController {
         return label
     }()
     
-    var cancelBtn: UIButton = {
+    lazy var cancelBtn: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(systemName: "xmark.circle"), for: .normal)
         button.tintColor = .white
@@ -145,7 +143,7 @@ extension InfoModalViewController: UITableViewDataSource, UITableViewDelegate {
     
     //테이블 항목 수
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return searchweatherData.count ?? 0
+        return searchweatherData.count 
     }
     
     //셀 구성
