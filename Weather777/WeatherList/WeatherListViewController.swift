@@ -77,8 +77,6 @@ class WeatherListViewController: UIViewController, CLLocationManagerDelegate
         print(weatherDataList[index].tempMin)
     }
     
- 
-    
     var temperatureUnits: String = "C"
     var checkdCelsiusAction: UIMenuElement.State = .on
     var checkedFahrenheitAction: UIMenuElement.State = .off
@@ -86,61 +84,6 @@ class WeatherListViewController: UIViewController, CLLocationManagerDelegate
     lazy var locationData: [CLLocationCoordinate2D] = []
     var weatherDataList: [WeatherInfo] = [WeatherInfo(cityName: "", time: "", weatherDescription: "", temperature: 0, tempMax: 0, tempMin: 0)]
     var index: Int = 0
-    
-    // 위도, 경도 값을 통해 해당하는 지역의 표시할 날씨 데이터 처리
-//    func updateWetherInfo(latitude: Double, longitude: Double)
-//    {
-//        let latitude = latitude
-//        let longitude = longitude
-//        print("날씨 정보 함수")
-//
-//        WeatherManager.shared.getForecastWeather(latitude: latitude, longitude: longitude)
-//        { [weak self] result in
-//            switch result
-//            {
-//            case .success(let data):
-//                // 현재 시각
-//                let now = Date()
-//                var selectedData = [(cityname: String, time: String, weatherIcon: String, weatherdescription: String, temperature: Double, wind: String, humidity: Int, tempMin: Double, tempMax: Double, feelsLike: Double, rainfall: Double)]()
-//
-//                // DateFormatter 설정
-//                let dateFormatter = DateFormatter()
-//                dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-//
-//                // 가장 가까운 과거 시간 찾기
-//                var closestPastIndex = -1
-//                for (index, forecast) in data.enumerated() {
-//                    if let date = dateFormatter.date(from: forecast.time), date <= now {
-//                        closestPastIndex = index
-//                    } else {
-//                        break // 이미 과거 시간 중 가장 가까운 시간을 찾았으므로 반복 중단
-//                    }
-//                }
-//
-//                // 가장 가까운 과거 시간부터 8개 데이터 선택
-//                if closestPastIndex != -1 {
-//                    let startIndex = closestPastIndex
-//                    let endIndex = min(startIndex + 8, data.count)
-//                    selectedData = Array(data[startIndex..<endIndex])
-//                }
-//
-//                    if let firstSelectData = selectedData.first
-//                    {
-//                        let cityNameInKorean = NSLocalizedString(firstSelectData.cityname, comment: "")
-//                        let time = firstSelectData.time
-//                        let weatherDescription = firstSelectData.weatherdescription
-//                        let temperature = firstSelectData.temperature
-//                        let tempMax = firstSelectData.tempMax
-//                        let tempMin = firstSelectData.tempMin
-//                        
-//                        self?.weatherDataList.append(WeatherInfo(cityName: cityNameInKorean, time: time, weatherDescription: weatherDescription, temperature: temperature, tempMax: tempMax, tempMin: tempMin))
-//                    }
-//                
-//            case .failure(let error):
-//                print("Error: \(error)")
-//            }
-//        }
-//    }
     
 // MARK: - UI 구성
     let weatherLabel: UILabel =
@@ -168,14 +111,12 @@ class WeatherListViewController: UIViewController, CLLocationManagerDelegate
             self.temperatureUnits = "C"
             self.checkdCelsiusAction = .on
             self.checkedFahrenheitAction = .off
-            self.updateTemperature()
             self.updateMenu()
         })
         let F = UIAction(title: "화씨", image: UIImage(named: "°F"), state: checkedFahrenheitAction, handler: { _ in
             self.temperatureUnits = "F"
             self.checkdCelsiusAction = .off
             self.checkedFahrenheitAction = .on
-            self.updateTemperature()
             self.updateMenu()
         })
         
@@ -311,7 +252,6 @@ class WeatherListViewController: UIViewController, CLLocationManagerDelegate
         }
     }
 
-    
 // MARK: - Notification
     func registerObserver()
     {
@@ -372,24 +312,6 @@ class WeatherListViewController: UIViewController, CLLocationManagerDelegate
         }
       }
     
-// MARK: - 온도 단위 변환 함수
-    func updateTemperature()
-    {
-//        if temperatureUnits == "C"
-//        {
-//            self.temperature = round(self.temperature - 32) / 1.8
-//            self.highTemperature = round(self.highTemperature - 32) / 1.8
-//            self.lowTemperature = round(self.lowTemperature - 32) / 1.8
-//        }
-//        
-//        else
-//        {
-//            self.temperature = round(self.temperature * 1.8) + 32
-//            self.highTemperature = round(self.highTemperature * 1.8) + 32
-//            self.lowTemperature = round(self.lowTemperature * 1.8) + 32
-//        }
-    }
-    
 // MARK: - settingButton의 UIMenu와 변경된 온도 단위를 tableView에 적용
     func updateMenu()
     {
@@ -408,19 +330,17 @@ class WeatherListViewController: UIViewController, CLLocationManagerDelegate
         let edit = UIAction(title: "목록 편집", image: UIImage(systemName: "pencil"), state: .off, handler: { _ in print("목록 편집") })
         let C = UIAction(title: "섭씨", image: UIImage(named: "°C"), state: checkdCelsiusAction, handler: { _ in
             self.temperatureUnits = "C"
-            self.updateTemperature()
             self.updateMenu()
         })
         let F = UIAction(title: "화씨", image: UIImage(named: "°F"), state: checkedFahrenheitAction, handler: { _ in
             self.temperatureUnits = "F"
-            self.updateTemperature()
             self.updateMenu()
         })
         
         let line = UIMenu(title: "", options: .displayInline, children: [C, F])
         let menu = UIMenu(title: "", children: [edit, line])
         settingButton.menu = menu
-        
+    
         weatherListTableView.reloadData()
     }
 }
@@ -478,11 +398,16 @@ extension WeatherListViewController: UITableViewDataSource, UITableViewDelegate
         cell.locationLabel.text = indexPath.row == 0 ?  "나의 위치" : weatherDataList[indexPath.row].cityName
         cell.timeOrCityLabel.text = indexPath.row == 0 ? weatherDataList[indexPath.row].cityName : weatherDataList[indexPath.row].time
         cell.weatherLabel.text = weatherDataList[indexPath.row].weatherDescription
-        cell.temperatureLabel.text = "\(weatherDataList[indexPath.row].temperature)°\(temperatureUnits)"
-        cell.highTemperatureLabel.text = "최고\(weatherDataList[indexPath.row].tempMax)°\(temperatureUnits)"
-        cell.lowTemperatureLabel.text = "최저 \(weatherDataList[indexPath.row].tempMin)°\(temperatureUnits)"
-
         
+        let temperature = temperatureUnits == "C" ? weatherDataList[indexPath.row].temperature : (weatherDataList[indexPath.row].temperature * 1.8) + 32
+        cell.temperatureLabel.text = "\(temperature)°\(temperatureUnits)"
+                
+        let highTemperature = temperatureUnits == "C" ? weatherDataList[indexPath.row].tempMax : (weatherDataList[indexPath.row].tempMax * 1.8) + 32
+        cell.highTemperatureLabel.text = "최고\(highTemperature)°\(temperatureUnits)"
+                
+        let lowTemperature = temperatureUnits == "C" ? weatherDataList[indexPath.row].tempMin : (weatherDataList[indexPath.row].tempMin * 1.8) + 32
+        cell.lowTemperatureLabel.text = "최저 \(lowTemperature)°\(temperatureUnits)"
+
         // weatherDataList 어떤 값이 있고 몇개가 있는지
         // 현재indexPath.row 불리고 있는 값이 몇인지
         
