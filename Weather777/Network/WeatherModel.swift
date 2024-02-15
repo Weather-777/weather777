@@ -26,7 +26,15 @@ struct City: Codable {
 
 // MARK: - Coord
 struct Coord: Codable {
-    let lat, lon: Double
+    var id: Int
+    var lat, lon: Double
+}
+extension Coord {
+    init(lat: Double, lon: Double) {
+        self.id = UUID().hashValue
+        self.lat = lat
+        self.lon = lon
+    }
 }
 
 // MARK: - List
