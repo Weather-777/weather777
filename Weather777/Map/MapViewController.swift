@@ -1,10 +1,3 @@
-//
-//  MapViewController.swift
-//  Weather777
-//
-//  Created by Jason Yang on 2/5/24.
-//
-
 import UIKit
 import MapKit
 import SwiftUI
@@ -17,9 +10,25 @@ enum InfoType {
     case airquality
 }
 
+struct MapInfo {
+    var cityname: String
+    var temperature: Double
+    var wind: String
+}
+
 class MapViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
     //처음 화면 로드 시 강수량 디폴트
     var type: InfoType = .precipitation
+    
+    //userdefault 저장된 값 호출
+    private var coordList: [Coord] = CityListManager.shared.readAll()
+    
+//    //처음 좌표를 넣어서 뽑아오는 데이터 배열
+//    var forecastData: [(cityname: String, time: String, weatherIcon: String, weatherdescription: String, temperature: Double, wind: String, humidity: Int, tempMin: Double, tempMax: Double, feelsLike: Double, rainfall: Double)] = []
+    
+    //MapView에서만 사용될 데이터 배열
+    var configMapInfo: [MapInfo] = []
+    
     
     //임의로 지역 배열- 지역명과 좌표만 저장되어 있는 형태
     var searchweatherData: [(title: String, coordinate: CLLocationCoordinate2D)] = [("1", CLLocationCoordinate2D(latitude: 37.2719952, longitude: 127.4348221)), ("2", CLLocationCoordinate2D(latitude: 37.58218213889754, longitude: 127.0594372509795))]
@@ -123,9 +132,6 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, MKMapViewD
         
         return button
     }()
-    
-    
-    
 
     //LocationManager 호출
     var locationManager = LocationManager.shared
@@ -144,9 +150,9 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, MKMapViewD
         
         addView()
         addViewConstraints()
-        setRegion()
         setInfoView()
-        createAnnotaion(locations: searchweatherData)
+        convertCoord()
+        createAnnotaion(locations: coordList, Info: configMapInfo)
         
     }
     
@@ -234,6 +240,30 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, MKMapViewD
         }
         //이후에 타입에 따라 화면에 애니메이션 구성
     }
+    
+    //저장소의 좌표값에 따라 값 가져온 배열 만들기
+    private func convertCoord() {
+        
+        var forecastData: [(cityname: String, time: String, weatherIcon: String, weatherdescription: String, temperature: Double, wind: String, humidity: Int, tempMin: Double, tempMax: Double, feelsLike: Double, rainfall: Double)] = []
+        
+        for data in coordList {
+            WeatherManager.shared.getForecastWeather(latitude: data.lat, longitude: data.lon) { result in
+                switch result {
+                case .success(let data):
+                    
+                    forecastData = data
+                    
+                    for forecast in forecastData {
+                        let appenddata = MapInfo(cityname: forecast.cityname, temperature: forecast.temperature, wind: forecast.wind)
+                        self.configMapInfo.append(appenddata)
+                    }
+  
+                case .failure(let error):
+                    print("Error: \(error)")
+                }
+            }
+        }
+    }
 }
 
 
@@ -258,17 +288,17 @@ extension MapViewController {
 //MARK: - AnnotationDelegate
 extension MapViewController {
     // 사용자 정의 어노테이션 추가
-    func createAnnotaion(locations: [(title: String, coordinate: CLLocationCoordinate2D)]) {
+    func createAnnotaion(locations: [Coord], Info: [MapInfo]) {
         for searchData in locations {
-            let title = searchData.title
-            let coordinate = searchData.coordinate
-            let temperature = "2°C"
+            let title = Info[(searchData.id) - 1].cityname
+            let coordinate = CLLocationCoordinate2D(latitude: searchData.lat, longitude: searchData.lon)
+            let temperature = Info[searchData.id].temperature
             
             addCustomPin(title: title, temperature: temperature, coordinate: coordinate)
         }
     }
     //맵에 핀 생성
-    func addCustomPin(title: String,temperature: String, coordinate: CLLocationCoordinate2D) {
+    func addCustomPin(title: String,temperature: Double, coordinate: CLLocationCoordinate2D) {
         let pin = CustomAnnotation(title: title, temperature: temperature, coordinate: coordinate)
         mapView.addAnnotation(pin)
     }
