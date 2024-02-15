@@ -35,12 +35,13 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, MKMapViewD
         return view
     }()
     
-    var completeBtn: UIButton = {
+    lazy var completeBtn: UIButton = {
         let button = UIButton()
         button.setTitle("완료", for: .normal)
+        button.setTitleColor(UIColor.black, for: .normal)
         button.frame = CGRect(x: 0, y: 0, width: 0, height: 0)
         button.layer.cornerRadius = 5
-        button.backgroundColor = UIColor.gray
+        button.backgroundColor = UIColor.white
         
         button.addTarget(self, action: #selector(goToMainView), for: .touchUpInside)
         
@@ -49,8 +50,8 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, MKMapViewD
     
     var infoLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .white
-        label.backgroundColor = UIColor.gray
+        label.textColor = .black
+        label.backgroundColor = UIColor.white
         label.clipsToBounds = true
         label.layer.cornerRadius = 5
         label.textAlignment = .center
@@ -58,12 +59,12 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, MKMapViewD
         return label
     }()
     
-    var centerLocateBtn: UIButton = {
+    lazy var centerLocateBtn: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(systemName: "location"), for: .normal)
-        button.tintColor = .white
+        button.tintColor = .black
         button.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
-        button.backgroundColor = UIColor.gray
+        button.backgroundColor = UIColor.white
         
         //버튼의 상단부분만 둥글게 만들어주는 mask
         let maskPath = UIBezierPath(roundedRect: button.bounds, byRoundingCorners: [.topLeft,.topRight], cornerRadii: CGSize(width: 5.0, height: 5.0))
@@ -76,12 +77,12 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, MKMapViewD
         return button
     }()
     
-    var myLocationsInfoBtn: UIButton = {
+    lazy var myLocationsInfoBtn: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(systemName: "list.bullet"), for: .normal)
         button.frame = CGRect(x: 330, y: 100, width: 40, height: 40)
-        button.backgroundColor = UIColor.gray
-        button.tintColor = .white
+        button.backgroundColor = UIColor.white
+        button.tintColor = .black
         
         //버튼의 하단부분만 둥글게 만들어주는 mask
         let maskPath = UIBezierPath(roundedRect: button.bounds, byRoundingCorners: [.bottomLeft,.bottomRight], cornerRadii: CGSize(width: 5.0, height: 5.0))
@@ -94,73 +95,37 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, MKMapViewD
         return button
     }()
     
-    var infoSectionBtn: UIButton = {
-        let button = UIButton(type: .custom)
+    lazy var infoSectionBtn: UIButton = {
+        let button = UIButton()
         button.setImage(UIImage(systemName: "square.stack.3d.up"), for: .normal)
-        button.frame = CGRect(x: 330, y: 150, width: 40, height: 40)
+        button.tintColor = .black
         button.layer.cornerRadius = 5
-        button.backgroundColor = UIColor.gray
-        button.tintColor = .white
+        button.backgroundColor = UIColor.white
         
-        button.addTarget(self, action: #selector(changeInfo), for: .touchUpInside)
+        let precipitation = UIAction(title: "강수량", image: UIImage(systemName: "umbrella"), state: .off, handler: { _ in
+            self.type = .precipitation
+            self.setInfoView()
+        })
+        let temperature = UIAction(title: "온도", image: UIImage(systemName: "thermometer.medium"), state: .off, handler: { _ in
+            self.type = .temperature
+            self.setInfoView()
+        })
+        let airquality = UIAction(title: "대기질", image: UIImage(systemName: "aqi.medium"), state: .off, handler: { _ in
+            self.type = .airquality
+            self.setInfoView()
+        })
+        
+        let menu = UIMenu(title: "", options: .displayInline, children: [precipitation, temperature, airquality])
+        
+        button.menu = menu
+        button.showsMenuAsPrimaryAction = true
+        button.changesSelectionAsPrimaryAction = false
         
         return button
     }()
     
-    //stackView에 3가지 버튼을 추가한 뷰 구현
-    var infoSectionDropdownView: UIStackView = {
-        let view = UIStackView()
-        view.backgroundColor = .gray
-        view.axis = .vertical
-        view.distribution = .fillEqually
-        view.layer.cornerRadius = 5
-        view.isHidden = true
-        view.frame = CGRect(x: 230, y: 190, width: 120, height: 120)
-        
-        let button1 = UIButton(type: .system)
-        button1.setTitle("강수량", for: .normal)
-        button1.setImage(UIImage(systemName: "umbrella"), for: .normal)
-        button1.titleEdgeInsets = UIEdgeInsets(top: 0, left: 30, bottom: 0, right: 0)
-        button1.imageEdgeInsets = UIEdgeInsets(top: 0, left: 5, bottom: 0, right: 10)
-        button1.contentHorizontalAlignment = .leading
-        button1.backgroundColor = .gray
-        button1.layer.cornerRadius = 5
-        button1.tintColor = .white
-        button1.tag = 0
-        button1.addTarget(self, action: #selector(buttonTapped(_:)), for: .touchUpInside)
-        
-        view.addArrangedSubview(button1)
-        
-        let button2 = UIButton(type: .system)
-        button2.setTitle("온도", for: .normal)
-        button2.setImage(UIImage(systemName: "thermometer.medium"), for: .normal)
-        button2.titleEdgeInsets = UIEdgeInsets(top: 0, left: 50, bottom: 0, right: 0)
-        button2.imageEdgeInsets = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
-        button2.contentHorizontalAlignment = .leading
-        button2.backgroundColor = .gray
-        button2.layer.cornerRadius = 5
-        button2.tintColor = .white
-        button2.tag = 1
-        button2.addTarget(self, action: #selector(buttonTapped(_:)), for: .touchUpInside)
-        
-        view.addArrangedSubview(button2)
-        
-        let button3 = UIButton(type: .system)
-        button3.setTitle("대기질", for: .normal)
-        button3.setImage(UIImage(systemName: "aqi.medium"), for: .normal)
-        button3.titleEdgeInsets = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 0)
-        button3.imageEdgeInsets = UIEdgeInsets(top: 0, left: 5, bottom: 0, right: 15)
-        button3.contentHorizontalAlignment = .leading
-        button3.backgroundColor = .gray
-        button3.layer.cornerRadius = 5
-        button3.tintColor = .white
-        button3.tag = 2
-        button3.addTarget(self, action: #selector(buttonTapped(_:)), for: .touchUpInside)
-        
-        view.addArrangedSubview(button3)
-        
-        return view
-    }()
+    
+    
 
     //LocationManager 호출
     var locationManager = LocationManager.shared
@@ -177,9 +142,6 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, MKMapViewD
         mapView.delegate = self
         mapView.register(CustomAnnotationView.self, forAnnotationViewWithReuseIdentifier: CustomAnnotationView.identifier)
         
-        //유저 위치 보여주기
-//        mapView.showsUserLocation = true
-        
         addView()
         addViewConstraints()
         setRegion()
@@ -189,7 +151,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, MKMapViewD
     }
     
     //MARK: - AddSubView
-    func addView() {
+    private func addView() {
         //완료 버튼
         view.addSubview(completeBtn)
         //현재 정보
@@ -200,12 +162,10 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, MKMapViewD
         view.addSubview(myLocationsInfoBtn)
         //날씨 정보 선택(강수랑, 온도, 대기질) 버튼
         view.addSubview(infoSectionBtn)
-        //날씨 정보 선택 버튼 선택 시 나타나는 드롭다운 뷰
-        view.addSubview(infoSectionDropdownView)
     }
     
     //MARK: - View Constraints
-    func addViewConstraints() {
+    private func addViewConstraints() {
         completeBtn.snp.makeConstraints { make in
             make.top.equalTo(view.snp.top).inset(60)
             make.leading.equalTo(view.snp.leading).inset(20)
@@ -237,17 +197,10 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, MKMapViewD
             make.trailing.equalTo(view.snp.trailing).inset(20)
             make.size.equalTo(40)
         }
-        
-        infoSectionDropdownView.snp.makeConstraints { make in
-            make.top.equalTo(infoSectionBtn.snp.bottom)
-            make.trailing.equalTo(view.snp.trailing).inset(50)
-            make.height.equalTo(120)
-            make.width.equalTo(130)
-        }
     }
     
     //지역 설정
-    func setRegion() {
+    private func setRegion() {
         guard let currentLocation = locationManager.currentLocation else { return }
         let center = CLLocationCoordinate2D(latitude: currentLocation.latitude, longitude: currentLocation.longitude)
         let region = MKCoordinateRegion(center: center, span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1))
@@ -256,7 +209,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, MKMapViewD
     }
     
     //지역별 정보 모달
-    func showInfoModal() {
+    private func showInfoModal() {
         let vc = InfoModalViewController()
         vc.type = self.type
         vc.searchweatherData = self.searchweatherData
@@ -269,7 +222,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, MKMapViewD
     }
     
     //정보 타입 설정에 따른 레이블 지정
-    func setInfoView() {
+    private func setInfoView() {
         //화면 텍스트
         switch type {
         case .precipitation:
@@ -299,28 +252,6 @@ extension MapViewController {
     
     @objc func showLocationInfo() {
         showInfoModal()
-    }
-    
-    @objc func changeInfo() {
-        //infoSection 버튼 나타내기, 숨기기 적용
-        infoSectionDropdownView.isHidden.toggle()
-    }
-    
-    @objc func buttonTapped(_ sender: UIButton) {
-        // 버튼 태그에 따라 정보 타입 결정
-        switch sender.tag {
-        case 0:
-            type = .precipitation
-        case 1:
-            type = .temperature
-        case 2:
-            type = .airquality
-        default:
-            return
-        }
-        //변경되면 레이블 값 update하기 위해 함수 호출
-        setInfoView()
-        infoSectionDropdownView.isHidden.toggle()
     }
 }
 
