@@ -47,7 +47,7 @@ class SearchViewController: UIViewController
         return tableView
     }()
     
-// MARK: - Life Cycle
+    // MARK: - Life Cycle
     override func viewDidLoad()
     {
         super.viewDidLoad()
@@ -68,10 +68,10 @@ class SearchViewController: UIViewController
         
         let searchListnib = UINib(nibName: "SearchResultTableViewCell", bundle: nil)
         searchResultTableView.register(searchListnib, forCellReuseIdentifier: "SearchResultTableViewCell")
-
+        
     }
     
-    override func viewDidDisappear(_ animated: Bool) 
+    override func viewDidDisappear(_ animated: Bool)
     {
         NotificationCenter.default.post(
             name: Notification.Name("dismissView"),
@@ -79,40 +79,39 @@ class SearchViewController: UIViewController
         )
     }
     
-// MARK: - 레이아웃 지정
-        func addSubView()
-        {
-            view.addSubview(locationSearchBar)
-            view.addSubview(searchResultTableView)
-        }
-        
-        func setLayout()
-        {
-            NSLayoutConstraint.activate([
-                locationSearchBar.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-                locationSearchBar.topAnchor.constraint(equalTo: view.topAnchor, constant: 0),
-                locationSearchBar.widthAnchor.constraint(equalToConstant: 384),
-                locationSearchBar.heightAnchor.constraint(equalToConstant: 30),
-                
-                searchResultTableView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-                searchResultTableView.topAnchor.constraint(equalTo: locationSearchBar.bottomAnchor, constant: 20),
-                searchResultTableView.widthAnchor.constraint(equalToConstant: 370),
-                searchResultTableView.heightAnchor.constraint(equalToConstant: 600)
-            ])
-        }
+    // MARK: - 레이아웃 지정
+    func addSubView()
+    {
+        view.addSubview(locationSearchBar)
+        view.addSubview(searchResultTableView)
+    }
     
-// MARK: - Notification
+    func setLayout()
+    {
+        NSLayoutConstraint.activate([
+            locationSearchBar.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            locationSearchBar.topAnchor.constraint(equalTo: view.topAnchor, constant: 0),
+            locationSearchBar.widthAnchor.constraint(equalToConstant: 384),
+            locationSearchBar.heightAnchor.constraint(equalToConstant: 30),
+            
+            searchResultTableView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            searchResultTableView.topAnchor.constraint(equalTo: locationSearchBar.bottomAnchor, constant: 20),
+            searchResultTableView.widthAnchor.constraint(equalToConstant: 370),
+            searchResultTableView.heightAnchor.constraint(equalToConstant: 600)
+        ])
+    }
+    
+    // MARK: - Notification
     func registerObserver()
     {
-       NotificationCenter.default.addObserver(
-         self,
-         selector: #selector(sendData),
-         name: NSNotification.Name("sendWeatherData"),
-         object: nil
-       )
-        
-     }
-
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(sendData),
+            name: NSNotification.Name("sendLocationData"),
+            object: nil
+        )
+    }
+    
     @objc func sendData(notification: NSNotification)
     {
         dismiss(animated: true, completion: nil)
