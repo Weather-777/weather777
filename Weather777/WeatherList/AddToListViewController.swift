@@ -33,64 +33,6 @@ class AddToListViewController: UIViewController
     var tempMax: Double = 0
     var tempMin: Double = 0
     
-    var sendData: [SendData] = []
-    
-    
-    func updateWetherInfo(latitude: Double, longitude: Double)
-    {
-        let latitude = latitude
-        let longitude = longitude
-        
-        print("날씨 정보 함수")
-
-        WeatherManager.shared.getForecastWeather(latitude: latitude, longitude: longitude)
-        { [weak self] result in
-            switch result
-            {
-            case .success(let data):
-                // 현재 시각
-                let now = Date()
-                var selectedData = [(cityname: String, time: String, weatherIcon: String, weatherdescription: String, temperature: Double, wind: String, humidity: Int, tempMin: Double, tempMax: Double, feelsLike: Double, rainfall: Double)]()
-
-                // DateFormatter 설정
-                let dateFormatter = DateFormatter()
-                dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-
-                // 가장 가까운 과거 시간 찾기
-                var closestPastIndex = -1
-                for (index, forecast) in data.enumerated() {
-                    if let date = dateFormatter.date(from: forecast.time), date <= now {
-                        closestPastIndex = index
-                    } else {
-                        break // 이미 과거 시간 중 가장 가까운 시간을 찾았으므로 반복 중단
-                    }
-                }
-
-                // 가장 가까운 과거 시간부터 8개 데이터 선택
-                if closestPastIndex != -1 {
-                    let startIndex = closestPastIndex
-                    let endIndex = min(startIndex + 8, data.count)
-                    selectedData = Array(data[startIndex..<endIndex])
-                }
-
-                    if let firstSelectData = selectedData.first
-                    {
-                        let cityName = NSLocalizedString(firstSelectData.cityname, comment: "")
-                        let time = firstSelectData.time
-                        let weatherDescription = firstSelectData.weatherdescription
-                        let temperature = firstSelectData.temperature
-                        let tempMax = firstSelectData.tempMax
-                        let tempMin = firstSelectData.tempMin
-                        
-                        self?.sendData.append(SendData(cityName: cityName, time: time, weatherDescription: weatherDescription, temperature: temperature, tempMax: tempMax, tempMin: tempMin))
-                    }
-                
-            case .failure(let error):
-                print("Error: \(error)")
-            }
-        }
-    }
-    
     // 위도, 경도 값을 통해 해당하는 지역의 표시할 날씨 데이터 처리
     
     lazy var cancelButton: UIButton =
@@ -140,8 +82,6 @@ class AddToListViewController: UIViewController
         
         addSubView()
         setLayout()
-        updateWetherInfo(latitude: location.latitude, longitude: location.longitude)
-        
     }
     
 // MARK: - 레이아웃 지정
@@ -195,16 +135,10 @@ class AddToListViewController: UIViewController
             print("UserDefaults \(coord.lat), \(coord.lon)")
         }
         
-        
         dismiss(animated: true, completion: nil)
         NotificationCenter.default.post(
             name: Notification.Name("sendLocationData"),
             object: location
-        )
-        
-        NotificationCenter.default.post(
-            name: Notification.Name("sendWeatherData"),
-            object: sendData
         )
     }
     

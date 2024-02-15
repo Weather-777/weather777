@@ -10,36 +10,6 @@ import MapKit
 import CoreLocation
 import SwiftUI
 
-//// MARK: - PreView
-//struct PreView: PreviewProvider
-//{
-//    static var previews: some View
-//    {
-//        WeatherListViewController().toPreview()
-//    }
-//}
-//
-//
-//#if DEBUG
-//extension UIViewController {
-//    private struct Preview: UIViewControllerRepresentable
-//    {
-//        let viewController: UIViewController
-//
-//        func makeUIViewController(context: Context) -> UIViewController
-//        {
-//            return viewController
-//        }
-//
-//        func updateUIViewController(_ uiViewController: UIViewController, context: Context) { }
-//    }
-//
-//    func toPreview() -> some View
-//    {
-//        Preview(viewController: self)
-//    }
-//}
-//#endif
 
 struct WeatherInfo
 {
@@ -70,7 +40,7 @@ class WeatherListViewController: UIViewController
     {
         let Datas = cityListManager.readAll()
         for coord in Datas
-        {print("UserDefaults \(coord.lat), \(coord.lon)") }   // 저장된 위도 경도 값
+        {print("UserDefaults \(coord.lat), \(coord.lon)")}   // 저장된 위도 경도 값
         print(weatherDataList[index].cityName)
         print(weatherDataList[index + 1].time)
         print(weatherDataList[index + 2].weatherDescription)
@@ -90,7 +60,8 @@ class WeatherListViewController: UIViewController
         if index < storedData.count 
         {
             let coord = storedData[index]
-            // 해당 인덱스의 값 출력
+            print("UserDefaults \(coord.lat), \(coord.lon)")
+            weatherDataList.removeAll()
             updateWetherInfo(latitude: coord.lat, longitude: coord.lon)
         }
         else {
@@ -104,48 +75,45 @@ class WeatherListViewController: UIViewController
     var checkedFahrenheitAction: UIMenuElement.State = .off
     
     lazy var locationData: [CLLocationCoordinate2D] = []
-    var weatherDataList: [WeatherInfo] = [WeatherInfo(cityName: "", time: "", weatherDescription: "", temperature: 0, tempMax: 0, tempMin: 0)]
+    var weatherDataList: [WeatherInfo] = []
     var index: Int = 0
     
-    func updateWetherInfo(latitude: Double, longitude: Double)
-    {
+    func updateWetherInfo(latitude: Double, longitude: Double) {
         let latitude = latitude
         let longitude = longitude
         
         print("날씨 정보 함수")
-
-        WeatherManager.shared.getForecastWeather(latitude: latitude, longitude: longitude)
-        { [weak self] result in
-            switch result
-            {
+        
+        WeatherManager.shared.getForecastWeather(latitude: latitude, longitude: longitude) { [weak self] result in
+            switch result {
             case .success(let data):
-                // 현재 시각
-                let now = Date()
-                var selectedData = [(cityname: String, time: String, weatherIcon: String, weatherdescription: String, temperature: Double, wind: String, humidity: Int, tempMin: Double, tempMax: Double, feelsLike: Double, rainfall: Double)]()
-
-                // DateFormatter 설정
-                let dateFormatter = DateFormatter()
-                dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-
-                // 가장 가까운 과거 시간 찾기
-                var closestPastIndex = -1
-                for (index, forecast) in data.enumerated() {
-                    if let date = dateFormatter.date(from: forecast.time), date <= now {
-                        closestPastIndex = index
-                    } else {
-                        break // 이미 과거 시간 중 가장 가까운 시간을 찾았으므로 반복 중단
+                DispatchQueue.main.async { // 비동기 작업을 메인 스레드에서 처리하도록 함
+                    // 현재 시각
+                    let now = Date()
+                    var selectedData = [(cityname: String, time: String, weatherIcon: String, weatherdescription: String, temperature: Double, wind: String, humidity: Int, tempMin: Double, tempMax: Double, feelsLike: Double, rainfall: Double)]()
+                    
+                    // DateFormatter 설정
+                    let dateFormatter = DateFormatter()
+                    dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+                    
+                    // 가장 가까운 과거 시간 찾기
+                    var closestPastIndex = -1
+                    for (index, forecast) in data.enumerated() {
+                        if let date = dateFormatter.date(from: forecast.time), date <= now {
+                            closestPastIndex = index
+                        } else {
+                            break // 이미 과거 시간 중 가장 가까운 시간을 찾았으므로 반복 중단
+                        }
                     }
-                }
-
-                // 가장 가까운 과거 시간부터 8개 데이터 선택
-                if closestPastIndex != -1 {
-                    let startIndex = closestPastIndex
-                    let endIndex = min(startIndex + 8, data.count)
-                    selectedData = Array(data[startIndex..<endIndex])
-                }
-
-                    if let firstSelectData = selectedData.first
-                    {
+                    
+                    // 가장 가까운 과거 시간부터 8개 데이터 선택
+                    if closestPastIndex != -1 {
+                        let startIndex = closestPastIndex
+                        let endIndex = min(startIndex + 8, data.count)
+                        selectedData = Array(data[startIndex..<endIndex])
+                    }
+                    
+                    for firstSelectData in selectedData {
                         let cityName = NSLocalizedString(firstSelectData.cityname, comment: "")
                         let time = firstSelectData.time
                         let weatherDescription = firstSelectData.weatherdescription
@@ -155,12 +123,17 @@ class WeatherListViewController: UIViewController
                         
                         self?.weatherDataList.append(WeatherInfo(cityName: cityName, time: time, weatherDescription: weatherDescription, temperature: temperature, tempMax: tempMax, tempMin: tempMin))
                     }
+                    
+                    // 테이블 뷰를 새로고침하여 데이터를 업데이트
+                    self?.weatherListTableView.reloadData()
+                }
                 
             case .failure(let error):
                 print("Error: \(error)")
             }
         }
     }
+
     
 // MARK: - UI 구성
     let weatherLabel: UILabel =
@@ -260,10 +233,6 @@ class WeatherListViewController: UIViewController
         setLayout()
         
     }
-    override func viewWillAppear(_ animated: Bool) 
-    {
-        showList()
-    }
     
 // MARK: - 레이아웃 지정
         func addSubView()
@@ -314,13 +283,6 @@ class WeatherListViewController: UIViewController
         
         NotificationCenter.default.addObserver(
           self,
-          selector: #selector(appendWeatherData),
-          name: NSNotification.Name("sendWeatherData"),
-          object: nil
-        )
-        
-        NotificationCenter.default.addObserver(
-          self,
           selector: #selector(dismissView),
           name: NSNotification.Name("dismissView"),
           object: nil
@@ -336,22 +298,6 @@ class WeatherListViewController: UIViewController
         }
         self.locationSearchBar.isHidden = false
       }
-    
-    @objc func appendWeatherData(notification: NSNotification)
-    {
-//        weatherDataList.append((notification.object as? [SendData]))
-            if let receivedData = notification.object as? [SendData] 
-            {
-                for data in receivedData
-                {
-                    let weatherInfo = WeatherInfo(cityName: data.cityName, time: data.time, weatherDescription: data.weatherDescription, temperature: data.temperature, tempMax: data.tempMax, tempMin: data.tempMin)
-                    weatherDataList.append(weatherInfo)
-                }
-            }
-//        updateWetherInfo(latitude: locationData[index].latitude, longitude: locationData[index].longitude)
-        weatherListTableView.reloadData()
-        index += 1
-    }
     
     @objc func dismissView(notification: NSNotification)
     {
@@ -416,7 +362,6 @@ extension WeatherListViewController: UISearchBarDelegate
         VC.modalPresentationStyle = .automatic
         VC.view.backgroundColor = UIColor.black.withAlphaComponent(0.5)
         present(VC, animated: true, completion: nil)
-        
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?)
@@ -436,7 +381,7 @@ extension WeatherListViewController: UITableViewDataSource, UITableViewDelegate
 {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
-        return locationData.count
+        return weatherDataList.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
@@ -449,21 +394,37 @@ extension WeatherListViewController: UITableViewDataSource, UITableViewDelegate
         cell.timeOrCityLabel.text = indexPath.row == 0 ? weatherDataList[indexPath.row].cityName : weatherDataList[indexPath.row].time
         cell.weatherLabel.text = weatherDataList[indexPath.row].weatherDescription
         
-        let temperature = temperatureUnits == "C" ? weatherDataList[indexPath.row].temperature : (weatherDataList[indexPath.row].temperature * 1.8) + 32
-        cell.temperatureLabel.text = "\(temperature)°\(temperatureUnits)"
+        let temperature = temperatureUnits == "C" ? round(weatherDataList[indexPath.row].temperature) : round((weatherDataList[indexPath.row].temperature * 1.8) + 32)
+        cell.temperatureLabel.text = "\(Int(temperature))°"
                 
-        let highTemperature = temperatureUnits == "C" ? weatherDataList[indexPath.row].tempMax : (weatherDataList[indexPath.row].tempMax * 1.8) + 32
-        cell.highTemperatureLabel.text = "최고\(highTemperature)°\(temperatureUnits)"
+        let highTemperature = temperatureUnits == "C" ? round(weatherDataList[indexPath.row].tempMax) : round((weatherDataList[indexPath.row].tempMax * 1.8) + 32)
+        cell.highTemperatureLabel.text = "최고\(Int(highTemperature))°"
                 
-        let lowTemperature = temperatureUnits == "C" ? weatherDataList[indexPath.row].tempMin : (weatherDataList[indexPath.row].tempMin * 1.8) + 32
-        cell.lowTemperatureLabel.text = "최저 \(lowTemperature)°\(temperatureUnits)"
+        let lowTemperature = temperatureUnits == "C" ? round(weatherDataList[indexPath.row].tempMin) : round(weatherDataList[indexPath.row].tempMin * 1.8) + 32
+        cell.lowTemperatureLabel.text = "최저 \(Int(lowTemperature))°"
 
         // weatherDataList 어떤 값이 있고 몇개가 있는지
         // 현재indexPath.row 불리고 있는 값이 몇인지
         
-        print("\(indexPath.row) cell \(weatherDataList[indexPath.row])")
+        print("\(indexPath.row) cell \n \(weatherDataList[indexPath.row])")
         print(locationData.count)
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) 
+    {
+        if editingStyle == .delete
+        {
+            // 삭제할 데이터를 가져오고
+            let deletedData = weatherDataList.remove(at: indexPath.row)
+            
+            // UserDefaults에서도 삭제된 데이터를 반영합니다.
+            let manager = CityListManager.shared
+            UserDefaults.standard.removeObject(forKey: "Coord")
+            
+            // 테이블 뷰에서 해당 셀을 삭제하고 UI를 갱신합니다.
+            tableView.deleteRows(at: [indexPath], with: .fade)
+        }
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
