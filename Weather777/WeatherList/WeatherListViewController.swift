@@ -40,13 +40,7 @@ class WeatherListViewController: UIViewController
     {
         let Datas = cityListManager.readAll()
         for coord in Datas
-        {print("UserDefaults \(coord.lat), \(coord.lon)")}   // 저장된 위도 경도 값
-        print(weatherDataList[index].cityName)
-        print(weatherDataList[index + 1].time)
-        print(weatherDataList[index + 2].weatherDescription)
-        print(weatherDataList[index + 3].temperature)
-        print(weatherDataList[index + 4].tempMax)
-        print(weatherDataList[index + 5].tempMin)
+        {print("UserDefaults 저장된 값 \(coord.lat), \(coord.lon)")}   // 저장된 위도 경도 값
     }
     
     func showList()
@@ -113,15 +107,26 @@ class WeatherListViewController: UIViewController
                         selectedData = Array(data[startIndex..<endIndex])
                     }
                     
-                    for firstSelectData in selectedData {
+                    if let firstSelectData = selectedData.first
+                    {
                         let cityName = NSLocalizedString(firstSelectData.cityname, comment: "")
-                        let time = firstSelectData.time
-                        let weatherDescription = firstSelectData.weatherdescription
-                        let temperature = firstSelectData.temperature
-                        let tempMax = firstSelectData.tempMax
-                        let tempMin = firstSelectData.tempMin
                         
-                        self?.weatherDataList.append(WeatherInfo(cityName: cityName, time: time, weatherDescription: weatherDescription, temperature: temperature, tempMax: tempMax, tempMin: tempMin))
+                        let calendar = Calendar.current
+                        if let date = dateFormatter.date(from: dateFormatter.dateFormat)
+                        {
+                            let calendar = Calendar.current
+                            let hour = calendar.component(.hour, from: date)
+                            let minute = calendar.component(.minute, from: date)
+                            let formattedTime = "\(hour) : \(minute)"
+                            let time = firstSelectData.time
+                            
+                            let weatherDescription = firstSelectData.weatherdescription
+                            let temperature = firstSelectData.temperature
+                            let tempMax = firstSelectData.tempMax
+                            let tempMin = firstSelectData.tempMin
+                            
+                            self?.weatherDataList.append(WeatherInfo(cityName: cityName, time: time, weatherDescription: weatherDescription, temperature: temperature, tempMax: tempMax, tempMin: tempMin))
+                        }
                     }
                     
                     // 테이블 뷰를 새로고침하여 데이터를 업데이트
