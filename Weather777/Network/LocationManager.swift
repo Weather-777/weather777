@@ -25,10 +25,11 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     
     override init() {
         super.init()
-        
         // Configure the location manager.
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        // 의미 있는 위치 변동이 있을 때만 업데이트하도록 distanceFilter 설정
+        locationManager.distanceFilter = 100
         locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
     }

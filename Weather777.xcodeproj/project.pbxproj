@@ -44,6 +44,7 @@
 		CC1C99172B7BAA0700ED4BC9 /* InfoModalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC1C99162B7BAA0700ED4BC9 /* InfoModalViewController.swift */; };
 		CC1C99232B7E05CB00ED4BC9 /* CityListManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC1C99222B7E05CB00ED4BC9 /* CityListManager.swift */; };
 		DA1B43F32B7C59AC00132454 /* WeatherCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA1B43F22B7C59AC00132454 /* WeatherCollectionViewCell.swift */; };
+		DA8830CB2B7E36FE00AD3639 /* AddToListCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA8830CA2B7E36FE00AD3639 /* AddToListCollectionViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -84,6 +85,7 @@
 		CC1C99162B7BAA0700ED4BC9 /* InfoModalViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InfoModalViewController.swift; sourceTree = "<group>"; };
 		CC1C99222B7E05CB00ED4BC9 /* CityListManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CityListManager.swift; sourceTree = "<group>"; };
 		DA1B43F22B7C59AC00132454 /* WeatherCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherCollectionViewCell.swift; sourceTree = "<group>"; };
+		DA8830CA2B7E36FE00AD3639 /* AddToListCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddToListCollectionViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -180,8 +182,9 @@
 				6C43002C2B736F36009D8A6B /* WeatherListTableViewCell.xib */,
 				6CF0284C2B7B205500791C34 /* SearchResultTableViewCell.swift */,
 				6CF0284D2B7B205500791C34 /* SearchResultTableViewCell.xib */,
-				6CF028482B74DEE100791C34 /* AddToListViewController.swift */,
 				6C57CF212B7B6C7100BEAAEE /* SearchViewController.swift */,
+				6CF028482B74DEE100791C34 /* AddToListViewController.swift */,
+				DA8830CA2B7E36FE00AD3639 /* AddToListCollectionViewCell.swift */,
 			);
 			path = WeatherList;
 			sourceTree = "<group>";
@@ -309,6 +312,7 @@
 				C87623862B7123D600748961 /* WeatherListViewController.swift in Sources */,
 				CC1C99172B7BAA0700ED4BC9 /* InfoModalViewController.swift in Sources */,
 				C87623842B71239F00748961 /* MapViewController.swift in Sources */,
+				DA8830CB2B7E36FE00AD3639 /* AddToListCollectionViewCell.swift in Sources */,
 				6CF028492B74DEE100791C34 /* AddToListViewController.swift in Sources */,
 				6C57CF222B7B6C7100BEAAEE /* SearchViewController.swift in Sources */,
 				C876238C2B71244600748961 /* WeatherManager.swift in Sources */,

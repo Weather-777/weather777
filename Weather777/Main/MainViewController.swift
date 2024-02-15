@@ -7,7 +7,6 @@
 
 import UIKit
 import SwiftUI
-import SnapKit
 import Then
 import Gifu
 import CoreLocation
@@ -138,9 +137,6 @@ class MainViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-//        if self.currentLatitude != 0.0 && self.currentLongitude != 0.0 {
-//            updateForecastData(latitude: currentLatitude, longitude: currentLongitude)
-//        }
         
         // 사용자에게 위치 권한 요청
         requestLocationAccess()
