@@ -39,8 +39,10 @@
 		C89ABB9E2B73AB1B006E2427 /* SnapKit-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = C89ABB9D2B73AB1B006E2427 /* SnapKit-Dynamic */; };
 		C89ABBA12B73AB21006E2427 /* Then in Frameworks */ = {isa = PBXBuildFile; productRef = C89ABBA02B73AB21006E2427 /* Then */; };
 		C8AD18112B7C68BA0010688E /* WeatherDataProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8AD18102B7C68BA0010688E /* WeatherDataProcessor.swift */; };
+		C8AD18162B7CFFC40010688E /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = C8AD18182B7CFFC40010688E /* Localizable.strings */; };
 		CC1C99152B7BA9FE00ED4BC9 /* CustomAnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC1C99142B7BA9FE00ED4BC9 /* CustomAnnotationView.swift */; };
 		CC1C99172B7BAA0700ED4BC9 /* InfoModalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC1C99162B7BAA0700ED4BC9 /* InfoModalViewController.swift */; };
+		DA1B43F32B7C59AC00132454 /* WeatherCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA1B43F22B7C59AC00132454 /* WeatherCollectionViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -74,8 +76,12 @@
 		C87623892B71243400748961 /* WeatherModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherModel.swift; sourceTree = "<group>"; };
 		C876238B2B71244600748961 /* WeatherManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherManager.swift; sourceTree = "<group>"; };
 		C8AD18102B7C68BA0010688E /* WeatherDataProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherDataProcessor.swift; sourceTree = "<group>"; };
+		C8AD18172B7CFFC40010688E /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		C8AD18192B7D004B0010688E /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/Localizable.strings; sourceTree = "<group>"; };
+		C8AD181A2B7D005E0010688E /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/Localizable.strings; sourceTree = "<group>"; };
 		CC1C99142B7BA9FE00ED4BC9 /* CustomAnnotationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomAnnotationView.swift; sourceTree = "<group>"; };
 		CC1C99162B7BAA0700ED4BC9 /* InfoModalViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InfoModalViewController.swift; sourceTree = "<group>"; };
+		DA1B43F22B7C59AC00132454 /* WeatherCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherCollectionViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -148,6 +154,7 @@
 				C850FADC2B7AFE9C0034C70B /* URL+Extensions.swift */,
 				C850FADE2B7B5B240034C70B /* Double+Extensions.swift */,
 				C83FC9482B734C1000639179 /* LocationManager.swift */,
+				C8AD18182B7CFFC40010688E /* Localizable.strings */,
 			);
 			path = Network;
 			sourceTree = "<group>";
@@ -156,6 +163,7 @@
 			isa = PBXGroup;
 			children = (
 				C87623812B71239600748961 /* MainViewController.swift */,
+				DA1B43F22B7C59AC00132454 /* WeatherCollectionViewCell.swift */,
 				4E46B42C2B7246E8005FF8C4 /* CleanSky.gif */,
 			);
 			path = Main;
@@ -243,6 +251,8 @@
 			knownRegions = (
 				en,
 				Base,
+				ko,
+				ar,
 			);
 			mainGroup = C87623532B7101A100748961;
 			packageReferences = (
@@ -267,6 +277,7 @@
 				6CF0284F2B7B205500791C34 /* SearchResultTableViewCell.xib in Resources */,
 				AFB46DCA2B7632F1001279EA /* Roboto-Thin.ttf in Resources */,
 				AFB46DC62B7632F1001279EA /* Roboto-Bold.ttf in Resources */,
+				C8AD18162B7CFFC40010688E /* Localizable.strings in Resources */,
 				C83FC94B2B734C3900639179 /* WeatherKey.plist in Resources */,
 				AFB46DC82B7632F1001279EA /* Roboto-Light.ttf in Resources */,
 				AFB46DC92B7632F1001279EA /* Roboto-Medium.ttf in Resources */,
@@ -304,6 +315,7 @@
 				C850FADF2B7B5B240034C70B /* Double+Extensions.swift in Sources */,
 				CC1C99152B7BA9FE00ED4BC9 /* CustomAnnotationView.swift in Sources */,
 				C850FADD2B7AFE9C0034C70B /* URL+Extensions.swift in Sources */,
+				DA1B43F32B7C59AC00132454 /* WeatherCollectionViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -318,6 +330,16 @@
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
 		};
+		C8AD18182B7CFFC40010688E /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				C8AD18172B7CFFC40010688E /* en */,
+				C8AD18192B7D004B0010688E /* ko */,
+				C8AD181A2B7D005E0010688E /* ar */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
@@ -326,6 +348,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -389,6 +412,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";

@@ -1,0 +1,37 @@
+/* 
+  Localizable.strings
+  Weather777
+
+  Created by Jason Yang on 2/14/24.
+  
+*/
+
+"Seoul" = "서울";
+"Incheon" = "인천";
+"Busan" = "부산";
+"Daegu" = "대구";
+"Daejeon" = "대전";
+"Gwangju" = "광주";
+"Suwon" = "수원";
+"Ulsan" = "울산";
+"Sejong" = "세종";
+"Goyang" = "고양";
+"Yongin" = "용인";
+"Seongnam" = "성남";
+"Gimpo" = "김포";
+"Ansan" = "안산";
+"Anyang" = "안양";
+"Bucheon" = "부천";
+"Namyangju" = "남양주";
+"Paju" = "파주";
+"Siheung" = "시흥";
+"Guri" = "구리";
+"Gunpo" = "군포";
+"Osan" = "오산";
+"Yangju" = "양주";
+"Icheon" = "이천";
+"Anseong" = "안성";
+"Pyeongtaek" = "평택";
+"Dongducheon" = "동두천";
+"Gimhae" = "김해";
+"Jeju" = "제주";

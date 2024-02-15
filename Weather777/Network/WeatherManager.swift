@@ -25,7 +25,7 @@ class WeatherManager {
     
     // MARK: - public Methods
     
-    public func getForecastWeather(latitude: Double, longitude: Double, completion: @escaping(Result<[(cityname: String, time: String, weatherIcon: String, temperature: Double, wind: String, humidity: Int, tempMin: Double, tempMax: Double, feelsLike: Double, rainfall: Double)], NetworkError>) -> Void) {
+    public func getForecastWeather(latitude: Double, longitude: Double, completion: @escaping(Result<[(cityname: String, time: String, weatherIcon: String, weatherdescription: String, temperature: Double, wind: String, humidity: Int, tempMin: Double, tempMax: Double, feelsLike: Double, rainfall: Double)], NetworkError>) -> Void) {
         // 위치데이터
         LocationManager.shared.setLocation(latitude: latitude, longitude: longitude)
         guard let currentLocation = LocationManager.shared.currentLocation else {

@@ -16,7 +16,7 @@ class ViewController: UIViewController, UISearchBarDelegate, UIGestureRecognizer
     
     let testLabel: UILabel = {
         let label = UILabel()
-        label.text = "7팀 화이팅입니다.😃"
+        label.text = NSLocalizedString("Seoul", comment: "")
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -38,7 +38,7 @@ class ViewController: UIViewController, UISearchBarDelegate, UIGestureRecognizer
         let latitude = 37.4536
         let longitude = 126.7317
         
-        var forecastData: [(time: String, weatherIcon: String, temperature: Double, wind: String, humidity: Int, tempMin: Double, tempMax: Double, feelsLike: Double, rainfall: Double)] = []
+        var forecastData: [(cityname: String, time: String, weatherIcon: String, weatherdescription: String, temperature: Double, wind: String, humidity: Int, tempMin: Double, tempMax: Double, feelsLike: Double, rainfall: Double)] = []
 
         WeatherManager.shared.getForecastWeather(latitude: latitude, longitude: longitude) { result in
             switch result {
@@ -48,8 +48,11 @@ class ViewController: UIViewController, UISearchBarDelegate, UIGestureRecognizer
                 // forecastData 배열에 데이터가 들어갔는지 확인
 
                 for forecast in forecastData {
+                    let cityNameInKorean = NSLocalizedString(forecast.cityname, comment: "")
+                    print("cityname: \(cityNameInKorean)")
                     print("Time: \(forecast.time)")
                     print("Weather Icon: \(forecast.weatherIcon)")
+                    print("weatherdescription: \(forecast.weatherdescription)")
                     print("Temperature: \(forecast.temperature)°C")
                     print("Wind Speed: \(forecast.wind)")
                     print("humidity: \(forecast.humidity)%")
