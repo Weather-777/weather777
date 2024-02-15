@@ -131,16 +131,28 @@ class AddToListViewController: UIViewController {
         self.updateForecastData(latitude: self.currentLatitude, longitude: self.currentLongitude)
         setupBlurEffect()
     }
-    
-    @objc func cancelButtonTapped() {
-        // 취소 버튼 동작 구현
-        self.dismiss(animated: true, completion: nil)
+
+    @objc func sendData(notification: NSNotification)
+    {
+        dismiss(animated: true, completion: nil)
     }
     
-    @objc func addButtonTapped() {
-        // 추가 버튼 동작 구현
-        // 예: 선택한 데이터를 목록에 추가하는 로직
-        print("추가 버튼이 눌렸습니다.")
+    @objc func addButtonTapped()
+    {
+        let saveLocation = Coord(lat: currentLatitude, lon: currentLongitude)
+        CityListManager.shared.add(saveLocation)
+        
+        dismiss(animated: true) {
+            NotificationCenter.default.post(
+                name: Notification.Name("sendLocationData"),
+                object: nil
+            )
+        }
+    }
+    
+    @objc func cancelButtonTapped()
+    {
+        dismiss(animated: true, completion: nil)
     }
     
     private func setUpViewHierarchy() {
