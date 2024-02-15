@@ -51,9 +51,9 @@ final class CityListManager {
     
     func update(coordId: Int) {
         
-        var coordList = datas
+        let coordList = datas
         
-        guard let targetIndex = coordList.firstIndex(where: { $0.id == coordId })
+        guard coordList.firstIndex(where: { $0.id == coordId }) != nil
         else {
             return
         }

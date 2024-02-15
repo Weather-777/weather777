@@ -42,6 +42,7 @@
 		C8AD18162B7CFFC40010688E /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = C8AD18182B7CFFC40010688E /* Localizable.strings */; };
 		CC1C99152B7BA9FE00ED4BC9 /* CustomAnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC1C99142B7BA9FE00ED4BC9 /* CustomAnnotationView.swift */; };
 		CC1C99172B7BAA0700ED4BC9 /* InfoModalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC1C99162B7BAA0700ED4BC9 /* InfoModalViewController.swift */; };
+		CC1C99232B7E05CB00ED4BC9 /* CityListManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC1C99222B7E05CB00ED4BC9 /* CityListManager.swift */; };
 		DA1B43F32B7C59AC00132454 /* WeatherCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA1B43F22B7C59AC00132454 /* WeatherCollectionViewCell.swift */; };
 /* End PBXBuildFile section */
 
@@ -81,6 +82,7 @@
 		C8AD181A2B7D005E0010688E /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/Localizable.strings; sourceTree = "<group>"; };
 		CC1C99142B7BA9FE00ED4BC9 /* CustomAnnotationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomAnnotationView.swift; sourceTree = "<group>"; };
 		CC1C99162B7BAA0700ED4BC9 /* InfoModalViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InfoModalViewController.swift; sourceTree = "<group>"; };
+		CC1C99222B7E05CB00ED4BC9 /* CityListManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CityListManager.swift; sourceTree = "<group>"; };
 		DA1B43F22B7C59AC00132454 /* WeatherCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherCollectionViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -154,6 +156,7 @@
 				C850FADC2B7AFE9C0034C70B /* URL+Extensions.swift */,
 				C850FADE2B7B5B240034C70B /* Double+Extensions.swift */,
 				C83FC9482B734C1000639179 /* LocationManager.swift */,
+				CC1C99222B7E05CB00ED4BC9 /* CityListManager.swift */,
 				C8AD18182B7CFFC40010688E /* Localizable.strings */,
 			);
 			path = Network;
@@ -301,6 +304,7 @@
 				C87623602B7101A100748961 /* AppDelegate.swift in Sources */,
 				6CF0284E2B7B205500791C34 /* SearchResultTableViewCell.swift in Sources */,
 				C87623622B7101A100748961 /* SceneDelegate.swift in Sources */,
+				CC1C99232B7E05CB00ED4BC9 /* CityListManager.swift in Sources */,
 				6C43002D2B736F36009D8A6B /* WeatherListTableViewCell.swift in Sources */,
 				C87623862B7123D600748961 /* WeatherListViewController.swift in Sources */,
 				CC1C99172B7BAA0700ED4BC9 /* InfoModalViewController.swift in Sources */,
@@ -471,7 +475,6 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
 				DEVELOPMENT_TEAM = 335MYJGX88;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
