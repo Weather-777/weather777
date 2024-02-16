@@ -51,7 +51,7 @@ class MainViewController: UIViewController {
         $0.spacing = 4
     }
     let humidityImageView = UIImageView().then {
-        $0.image = UIImage(named: "Humidity")
+        $0.image = UIImage(named: "humidity")
     }
     let humidityLabel = UILabel().then {
         $0.font = UIFont(name: "Roboto-Regular", size: 14)
