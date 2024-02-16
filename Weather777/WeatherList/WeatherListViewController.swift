@@ -401,19 +401,28 @@ extension WeatherListViewController: UITableViewDataSource, UITableViewDelegate
         let lowTemperature = temperatureUnits == "C" ? round(weatherDataList[indexPath.row].tempMin) : round(weatherDataList[indexPath.row].tempMin * 1.8) + 32
         cell.lowTemperatureLabel.text = "최저 \(Int(lowTemperature))°"
 
+        print(cityListManager.readAll())
         return cell
     }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) 
     {
-        if editingStyle == .delete
+        if editingStyle == .delete 
         {
-            UserDefaults.standard.removeObject(forKey: "Coord")
+            let manager = CityListManager.shared
+            var locations = manager.readAll()
+        
+            guard let id = locations[indexPath.row].id      // 삭제할 데이터의 id
+            else { return }
+
+            manager.delete(coordId: id)
+            weatherDataList.remove(at: indexPath.row)
             
+            // 테이블 뷰에서 해당 셀을 삭제하고 UI를 갱신합니다.
             tableView.deleteRows(at: [indexPath], with: .fade)
         }
     }
-    
+
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
         let VC = MainViewController()

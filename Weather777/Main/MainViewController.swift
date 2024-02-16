@@ -148,6 +148,42 @@ class MainViewController: UIViewController {
             self?.currentLatitude = location.latitude
             self?.currentLongitude = location.longitude
             self?.updateForecastData(latitude: self?.currentLatitude ?? 0, longitude: self?.currentLongitude ?? 0)
+            
+            let cityListManager = CityListManager.shared
+            let locations = cityListManager.readAll()
+
+            if locations.count == 0
+            {
+                let saveLocation = Coord(lat: self?.currentLatitude ?? 0, lon: self?.currentLongitude ?? 0)
+                CityListManager.shared.add(saveLocation)
+                
+                print("나의 위치 삽입")
+            }
+            else
+            {
+                if var firstLocation = locations.first
+                {
+                    guard let id = locations[0].id
+                    else { return }
+                    
+                    // 새로운 위도와 경도 값
+                    let newLatitude: Double = self?.currentLatitude ?? 0
+                    let newLongitude: Double = self?.currentLongitude ?? 0
+                    
+                    // 현재 위치를 가져와서 새로운 값을 할당합니다.
+                    firstLocation.lat = self?.currentLatitude ?? 0
+                    firstLocation.lon = self?.currentLongitude ?? 0
+                    
+                    // 변경된 값을 다시 UserDefaults에 저장합니다.
+                    cityListManager.update(coordId: id)
+                    
+                    print(id)
+                    print(self?.currentLatitude as Any)
+                    print(self?.currentLongitude as Any)
+                    print("나의 위치 변경")
+                }
+            }
+            print(locations)
         }
         
         // 앱 최초 실행에서 위치 권한 거부시 위치 설정으로 유도
@@ -421,14 +457,6 @@ class MainViewController: UIViewController {
     @objc func weatherListButtonTapped() {
         let weatherListVC = WeatherListViewController()
         weatherListVC.modalPresentationStyle = .fullScreen
-        let cityNameInKorean = NSLocalizedString(self.forecastData[0].cityname, comment: "")
-        let time = self.forecastData[0].time
-        let weatherDescirption = self.forecastData[0].weatherdescription
-        let temperature = self.forecastData[0].temperature
-        let tempMax = self.tempMax
-        let tempMin = self.tempMin
-        
-        weatherListVC.weatherDataList.append(WeatherInfo(cityName: cityNameInKorean, time: time, weatherDescription: weatherDescirption, temperature: temperature, tempMax: tempMax, tempMin: tempMin))
         present(weatherListVC, animated: true, completion: nil)
     }
 }
