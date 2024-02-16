@@ -15,6 +15,8 @@ class InfoModalViewController: UIViewController {
     
     var type: InfoType?
     var searchweatherData: [(title: String, coordinate: CLLocationCoordinate2D)] = []
+    //userdefault 저장된 값 호출
+    private var coordList: [Coord] = CityListManager.shared.readAll()
     
     //MARK: - UI Component
     var infoImage: UIImageView = {
@@ -143,13 +145,13 @@ extension InfoModalViewController: UITableViewDataSource, UITableViewDelegate {
     
     //테이블 항목 수
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return searchweatherData.count 
+        return coordList.count
     }
     
     //셀 구성
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "InfoCell", for: indexPath) as! InfoTableViewCell
-        cell.titleLabel.text = searchweatherData[indexPath.row].title
+        cell.titleLabel.text = "\(indexPath.row)"
         //정보 종류에 따른 detaillabel
         switch type {
         case .precipitation:
