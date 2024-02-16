@@ -25,122 +25,12 @@ class WeatherListViewController: UIViewController
 {
     let cityListManager = CityListManager.shared
     
-    var forecastData: [(cityname:String, time: String, weatherIcon: String, weatherdescription: String, temperature: Double, wind: String, humidity: Int, tempMin: Double, tempMax: Double, feelsLike: Double, rainfall: Double)] = []
-    
-    lazy var printButton: UIButton =
-    {
-        let button = UIButton()
-        button.setTitle("출력", for: .normal)
-        button.setTitleColor(.white, for: .normal)
-        button.addTarget(self, action: #selector(printcity), for: .touchUpInside)
-        
-        button.translatesAutoresizingMaskIntoConstraints = false
-        
-        return button
-    }()
-    @objc func printcity()
-    {
-        let Datas = cityListManager.readAll()
-        for coord in Datas
-        {
-            print("UserDefaults 저장된 값 \(coord.lat), \(coord.lon)")
-            
-        }   // 저장된 위도 경도 값
-        print(weatherDataList)
-        
-    }
-    
-    func showList()
-    {
-        // CityListManager의 readAll() 메서드를 사용하여 저장된 데이터를 불러옵니다.
-        let manager = CityListManager.shared
-        let storedData = manager.readAll()
-
-        for coord in storedData
-        {
-            print("UserDefaults \(coord.lat), \(coord.lon)")
-            weatherDataList.removeAll()
-            updateWetherInfo(latitude: coord.lat, longitude: coord.lon)
-        }
-        weatherListTableView.reloadData()
-    }
-    
     var temperatureUnits: String = "C"
     var checkdCelsiusAction: UIMenuElement.State = .on
     var checkedFahrenheitAction: UIMenuElement.State = .off
     
     lazy var locationData: [CLLocationCoordinate2D] = []
     var weatherDataList: [WeatherInfo] = []
-    var index: Int = 0
-    
-    func updateWetherInfo(latitude: Double, longitude: Double) {
-        let latitude = latitude
-        let longitude = longitude
-        
-        print("날씨 정보 함수")
-        
-        WeatherManager.shared.getForecastWeather(latitude: latitude, longitude: longitude) { [weak self] result in
-            switch result {
-            case .success(let data):
-                DispatchQueue.main.async { // 비동기 작업을 메인 스레드에서 처리하도록 함
-                    let now = Date()
-                    var selectedData = [(cityname: String, time: String, weatherIcon: String, weatherdescription: String, temperature: Double, wind: String, humidity: Int, tempMin: Double, tempMax: Double, feelsLike: Double, rainfall: Double)]()
-                    
-                    let dateFormatter = DateFormatter()
-                    dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-                    
-                    var closestPastIndex = -1
-                    for (index, forecast) in data.enumerated() {
-                        if let date = dateFormatter.date(from: forecast.time), date <= now {
-                            closestPastIndex = index
-                        } else {
-                            break
-                        }
-                    }
-                    
-                    if closestPastIndex != -1 {
-                        let startIndex = closestPastIndex
-                        let endIndex = min(startIndex + 8, data.count)
-                        selectedData = Array(data[startIndex..<endIndex])
-                    }
-                    
-                    if let firstSelectData = selectedData.first {
-                        let cityName = NSLocalizedString(firstSelectData.cityname, comment: "")
-                        var cutTime = ""
-                        let calendar = Calendar.current
-                        if let date = dateFormatter.date(from: dateFormatter.string(from: now)) 
-                        {
-                            let hour = calendar.component(.hour, from: date)
-                            let minute = calendar.component(.minute, from: date)
-                            
-                            // 시간과 분이 한 자리 숫자인 경우 앞에 0을 붙임
-                            let formattedHour = hour < 10 ? "0\(hour)" : "\(hour)"
-                            let formattedMinute = minute < 10 ? "0\(minute)" : "\(minute)"
-                            
-                            cutTime = "\(formattedHour) : \(formattedMinute)"
-                        }
-                        let weatherDescription = firstSelectData.weatherdescription
-                        let temperature = firstSelectData.temperature
-                        let tempMax = firstSelectData.tempMax
-                        let tempMin = firstSelectData.tempMin
-                            
-                        let weatherInfo = WeatherInfo(cityName: cityName, time: cutTime, weatherDescription: weatherDescription, temperature: temperature, tempMax: tempMax, tempMin: tempMin)
-                        
-                        // 여기에 weatherDataList에 추가하는 코드를 추가
-                        self?.weatherDataList.append(weatherInfo)
-                        
-                        // 추가한 데이터를 화면에 업데이트
-                        self?.weatherListTableView.reloadData()
-                    }
-                }
-                
-            case .failure(let error):
-                print("Error: \(error)")
-            }
-        }
-    }
-
-
     
 // MARK: - UI 구성
     let weatherLabel: UILabel =
@@ -252,16 +142,11 @@ class WeatherListViewController: UIViewController
             view.addSubview(settingButton)
             view.addSubview(locationSearchBar)
             view.addSubview(weatherListTableView)
-            view.addSubview(printButton)
         }
         
         func setLayout()
         {
             NSLayoutConstraint.activate([
-                printButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
-                printButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 40),
-                printButton.widthAnchor.constraint(equalToConstant: 40),
-                printButton.heightAnchor.constraint(equalToConstant: 30),
                 weatherLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
                 weatherLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 80),
             
@@ -335,6 +220,89 @@ class WeatherListViewController: UIViewController
             self.settingButton.isHidden = false
         }
     }
+    
+// MARK: - 저장된 위경도 값을 이용해 테이블 뷰에 표현할 데이터 append
+        func updateWetherInfo(latitude: Double, longitude: Double) {
+            let latitude = latitude
+            let longitude = longitude
+            
+            print("날씨 정보 함수")
+            
+            WeatherManager.shared.getForecastWeather(latitude: latitude, longitude: longitude) { [weak self] result in
+                switch result {
+                case .success(let data):
+                    DispatchQueue.main.async { // 비동기 작업을 메인 스레드에서 처리하도록 함
+                        let now = Date()
+                        var selectedData = [(cityname: String, time: String, weatherIcon: String, weatherdescription: String, temperature: Double, wind: String, humidity: Int, tempMin: Double, tempMax: Double, feelsLike: Double, rainfall: Double)]()
+                        
+                        let dateFormatter = DateFormatter()
+                        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+                        
+                        var closestPastIndex = -1
+                        for (index, forecast) in data.enumerated() {
+                            if let date = dateFormatter.date(from: forecast.time), date <= now {
+                                closestPastIndex = index
+                            } else {
+                                break
+                            }
+                        }
+                        
+                        if closestPastIndex != -1 {
+                            let startIndex = closestPastIndex
+                            let endIndex = min(startIndex + 8, data.count)
+                            selectedData = Array(data[startIndex..<endIndex])
+                        }
+                        
+                        if let firstSelectData = selectedData.first {
+                            let cityName = NSLocalizedString(firstSelectData.cityname, comment: "")
+                            var cutTime = ""
+                            let calendar = Calendar.current
+                            if let date = dateFormatter.date(from: dateFormatter.string(from: now))
+                            {
+                                let hour = calendar.component(.hour, from: date)
+                                let minute = calendar.component(.minute, from: date)
+                                
+                                // 시간과 분이 한 자리 숫자인 경우 앞에 0을 붙임
+                                let formattedHour = hour < 10 ? "0\(hour)" : "\(hour)"
+                                let formattedMinute = minute < 10 ? "0\(minute)" : "\(minute)"
+                                
+                                cutTime = "\(formattedHour) : \(formattedMinute)"
+                            }
+                            let weatherDescription = firstSelectData.weatherdescription
+                            let temperature = firstSelectData.temperature
+                            let tempMax = firstSelectData.tempMax
+                            let tempMin = firstSelectData.tempMin
+                                
+                            let weatherInfo = WeatherInfo(cityName: cityName, time: cutTime, weatherDescription: weatherDescription, temperature: temperature, tempMax: tempMax, tempMin: tempMin)
+                            
+                            // 여기에 weatherDataList에 추가하는 코드를 추가
+                            self?.weatherDataList.append(weatherInfo)
+                            
+                            // 추가한 데이터를 화면에 업데이트
+                            self?.weatherListTableView.reloadData()
+                        }
+                    }
+                    
+                case .failure(let error):
+                    print("Error: \(error)")
+                }
+            }
+        }
+
+        func showList()
+        {
+            // CityListManager의 readAll() 메서드를 사용하여 저장된 데이터를 불러옵니다.
+            let manager = CityListManager.shared
+            let storedData = manager.readAll()
+
+            for coord in storedData
+            {
+                print("UserDefaults \(coord.lat), \(coord.lon)")
+                weatherDataList.removeAll()
+                updateWetherInfo(latitude: coord.lat, longitude: coord.lon)
+            }
+            weatherListTableView.reloadData()
+        }
     
 // MARK: - settingButton의 UIMenu와 변경된 온도 단위를 tableView에 적용
     func updateMenu()
@@ -451,7 +419,12 @@ extension WeatherListViewController: UITableViewDataSource, UITableViewDelegate
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
         let VC = MainViewController()
-//      VC.**** = locationData[indexPath.row] // 위도 경도 변수 지정
+        let manager = CityListManager.shared
+        let locations = manager.readAll()
+
+        VC.currentLatitude = locations[indexPath.row].lat
+        VC.currentLongitude = locations[indexPath.row].lon
+        VC.updateForecastData(latitude: locations[indexPath.row].lat, longitude: locations[indexPath.row].lon)
         VC.modalPresentationStyle = .fullScreen
         present(VC, animated: true, completion: nil)
     }
