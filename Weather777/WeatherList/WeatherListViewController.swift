@@ -401,8 +401,6 @@ extension WeatherListViewController: UITableViewDataSource, UITableViewDelegate
         let lowTemperature = temperatureUnits == "C" ? round(weatherDataList[indexPath.row].tempMin) : round(weatherDataList[indexPath.row].tempMin * 1.8) + 32
         cell.lowTemperatureLabel.text = "최저 \(Int(lowTemperature))°"
 
-        print("\(indexPath.row) cell \n \(weatherDataList[indexPath.row])")
-        print(locationData.count)
         return cell
     }
     

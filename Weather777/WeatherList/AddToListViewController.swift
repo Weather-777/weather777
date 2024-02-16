@@ -150,7 +150,6 @@ class AddToListViewController: UIViewController {
                 object: self.sendWeatherData
             )
         }
-        print(sendWeatherData)
     }
     
     @objc func cancelButtonTapped()
@@ -339,7 +338,21 @@ class AddToListViewController: UIViewController {
                     self?.feelLikeTemperatureIndexLabel.text = String(self?.forecastData[0].feelsLike ?? 0)
                     self?.collectionView.reloadData()
                     
-                    self?.sendWeatherData = [WeatherInfo(cityName: cityNameInKorean, time: self?.forecastData[0].time ?? "", weatherDescription: self?.forecastData[0].weatherdescription ?? "", temperature: self?.forecastData[0].temperature ?? 0, tempMax: self?.forecastData[0].tempMax ?? 0, tempMin: self?.forecastData[0].tempMin ?? 0)]
+                    var cutTime = ""
+                    let calendar = Calendar.current
+                    if let date = dateFormatter.date(from: dateFormatter.string(from: now))
+                    {
+                        let hour = calendar.component(.hour, from: date)
+                        let minute = calendar.component(.minute, from: date)
+                        
+                        // 시간과 분이 한 자리 숫자인 경우 앞에 0을 붙임
+                        let formattedHour = hour < 10 ? "0\(hour)" : "\(hour)"
+                        let formattedMinute = minute < 10 ? "0\(minute)" : "\(minute)"
+                        
+                        cutTime = "\(formattedHour) : \(formattedMinute)"
+                    }
+                    
+                    self?.sendWeatherData = [WeatherInfo(cityName: cityNameInKorean, time: cutTime, weatherDescription: self?.forecastData[0].weatherdescription ?? "", temperature: self?.forecastData[0].temperature ?? 0, tempMax: self?.forecastData[0].tempMax ?? 0, tempMin: self?.forecastData[0].tempMin ?? 0)]
                 }
 
                 // 선택된 데이터 로그 출력
