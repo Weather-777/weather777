@@ -25,6 +25,8 @@ class WeatherListViewController: UIViewController
 {
     let cityListManager = CityListManager.shared
     
+    var forecastData: [(cityname:String, time: String, weatherIcon: String, weatherdescription: String, temperature: Double, wind: String, humidity: Int, tempMin: Double, tempMax: Double, feelsLike: Double, rainfall: Double)] = []
+    
     lazy var printButton: UIButton =
     {
         let button = UIButton()
