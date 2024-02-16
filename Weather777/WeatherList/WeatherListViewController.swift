@@ -419,13 +419,12 @@ extension WeatherListViewController: UITableViewDataSource, UITableViewDelegate
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
         let VC = MainViewController()
-        
         let manager = CityListManager.shared
         let locations = manager.readAll()
 
         VC.currentLatitude = locations[indexPath.row].lat
         VC.currentLongitude = locations[indexPath.row].lon
-        
+        VC.updateForecastData(latitude: locations[indexPath.row].lat, longitude: locations[indexPath.row].lon)
         VC.modalPresentationStyle = .fullScreen
         present(VC, animated: true, completion: nil)
     }
